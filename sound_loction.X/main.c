@@ -28,9 +28,12 @@ void init();
 void start_flash();
 
 
-
+/**
+ * 初始化
+ */
 void init()
 {
+    // 配置PORTB全为输出
     ANSELB = 0;
     TRISB = 0;
     PORTB = 0;
@@ -38,6 +41,9 @@ void init()
     return ;
 }
 
+/**
+ * 简单的开机动画，目前是死循环，不会结束
+ */
 void start_flash()
 {
     int i;
