@@ -7,7 +7,7 @@
 #include "timer1.h"
 
 #ifndef SYSTEM_PERIPHERAL_CLOCK
-#define SYSTEM_PERIPHERAL_CLOCK 6635520
+#define SYSTEM_PERIPHERAL_CLOCK 5529600
 #endif
 
 /*自动计算timer1重装载值*/

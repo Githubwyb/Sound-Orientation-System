@@ -7,19 +7,20 @@
 #include "protocol.h"
 #include "timer1.h"
 #include "led.h"
+#include "log.h"
 
 //11.0592MHz = 1152*9600
 /*
 *   sys config
-*   fSYS    = 22.1184/FPLLIDIV*FPLLMUL/FPLLODIV = 53.08416MHz
-*   fPBCK   = fSYS/FPBDIV = 6.63552MHz
+*   fSYS    = 22.1184/FPLLIDIV*FPLLMUL/FPLLODIV = 44.236800MHz
+*   fPBCK   = fSYS/FPBDIV = 5.5296MHz
 */
 /************************************************************************************************************/
 #pragma config ICESEL = ICS_PGx3        // ICE/ICD Comm Channel Select (Communicate on PGEC3/PGED3)
 #pragma config JTAGEN = OFF             // JTAG Enable (JTAG Disabled)
 
 // DEVCFG2
-#pragma config FPLLIDIV = DIV_10         // PLL Input Divider (2x Divider)
+#pragma config FPLLIDIV = DIV_12         // PLL Input Divider (2x Divider)
 #pragma config FPLLMUL = MUL_24         // PLL Multiplier (16x Multiplier)
 #pragma config UPLLIDIV = DIV_12        // USB PLL Input Divider (12x Divider)
 #pragma config UPLLEN = OFF             // USB PLL Enable (Disabled and Bypassed)
@@ -88,7 +89,9 @@ void main(void) {
     INTEnableInterrupts();
 
     led_init();
-    led_state(ON);
+    UART1Config();
+    WriteString("hello world~");
+    //led_state(ON);
     led_write(0b01010101);
     
     TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
