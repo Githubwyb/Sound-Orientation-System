@@ -8,6 +8,13 @@
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>led_drive.c</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>led.c</itemPath>
+      <itemPath>led.h</itemPath>
+      <itemPath>timer1.c</itemPath>
+      <itemPath>timer1.h</itemPath>
+      <itemPath>protocol.h</itemPath>
+      <itemPath>log.c</itemPath>
+      <itemPath>log.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>
@@ -28,7 +35,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>2.05</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -199,6 +206,7 @@
         <property key="UART1" value="true"/>
         <property key="UART2" value="true"/>
         <property key="USB" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -216,7 +224,7 @@
         <property key="memories.programmemory.partition2.start"
                   value="${memories.programmemory.partition2.start.value}"/>
         <property key="memories.programmemory.start" value="0x1d000000"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>
@@ -232,7 +240,7 @@
         <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
         <property key="programoptions.usehighvoltageonmclr" value="false"/>
         <property key="programoptions.uselvpprogramming" value="false"/>
-        <property key="voltagevalue" value="3.25"/>
+        <property key="voltagevalue" value="3.5"/>
         <property key="冻结所有其他外设" value="true"/>
         <property key="安全段。分部编程" value="FullChipProgramming"/>
       </PICkit3PlatformTool>

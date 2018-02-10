@@ -1,45 +1,45 @@
-/*
- * File:   main.c
- * Author: Shenghui_Wu
- *
- * Created on 2017年12月23日, 下午9:13
- */
 #include <xc.h>
 #include <stdint.h>
+#include <plib.h>
 
 #include "bit_operation.h"
 #include "led_drive.h"
+#include "protocol.h"
+#include "timer1.h"
+#include "led.h"
 
-// PIC32MX250F128B Configuration Bit Settings
-// 'C' source line config statements
-
-// DEVCFG3
-// USERID = No Setting
-// DEVCFG1
-#pragma config FNOSC = PRI              // Oscillator Selection Bits (Primary Osc (XT,HS,EC))
-#pragma config POSCMOD = EC             // Primary Oscillator Configuration (External clock mode)
-#pragma config FWDTEN = OFF             // Watchdog Timer Enable (WDT Disabled (SWDTEN Bit Controls))
-
-// DEVCFG0
+//11.0592MHz = 1152*9600
+/*
+*   sys config
+*   fSYS    = 22.1184/FPLLIDIV*FPLLMUL/FPLLODIV = 53.08416MHz
+*   fPBCK   = fSYS/FPBDIV = 6.63552MHz
+*/
+/************************************************************************************************************/
 #pragma config ICESEL = ICS_PGx3        // ICE/ICD Comm Channel Select (Communicate on PGEC3/PGED3)
 #pragma config JTAGEN = OFF             // JTAG Enable (JTAG Disabled)
 
-void init();
+// DEVCFG2
+#pragma config FPLLIDIV = DIV_10         // PLL Input Divider (2x Divider)
+#pragma config FPLLMUL = MUL_24         // PLL Multiplier (16x Multiplier)
+#pragma config UPLLIDIV = DIV_12        // USB PLL Input Divider (12x Divider)
+#pragma config UPLLEN = OFF             // USB PLL Enable (Disabled and Bypassed)
+#pragma config FPLLODIV = DIV_1         // System PLL Output Clock Divider (PLL Divide by 1)
+
+// DEVCFG1
+#pragma config FNOSC = PRIPLL           // Oscillator Selection Bits (Fast RC Osc with PLL)
+#pragma config FSOSCEN = OFF            // Secondary Oscillator Enable (Disabled)
+#pragma config IESO = ON                // Internal/External Switch Over (Enabled)
+#pragma config POSCMOD = HS             // Primary Oscillator Configuration (HS osc mode)
+#pragma config OSCIOFNC = OFF           // CLKO Output Signal Active on the OSCO Pin (Disabled)
+#pragma config FPBDIV = DIV_8           // Peripheral Clock Divisor (Pb_Clk is Sys_Clk/8)
+#pragma config FCKSM = CSDCMD           // Clock Switching and Monitor Selection (Clock Switch Disable, FSCM Disabled)
+#pragma config WDTPS = PS1048576        // Watchdog Timer Postscaler (1:1048576)
+#pragma config WINDIS = OFF             // Watchdog Timer Window Enable (Watchdog Timer is in Non-Window Mode)
+#pragma config FWDTEN = OFF             // Watchdog Timer Enable (WDT Disabled (SWDTEN Bit Controls))
+#pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
+/************************************************************************************************************/
+
 void start_flash();
-
-
-/**
- * 初始化
- */
-void init()
-{
-    // 配置PORTB全为输出
-    ANSELB = 0;
-    TRISB = 0;
-    PORTB = 0;
-    
-    return ;
-}
 
 /**
  * 简单的开机动画，目前是死循环，不会结束
@@ -66,19 +66,37 @@ void start_flash()
     }
 }
 
+void testhandler(void)
+{
+    static u8 flag = 0;
+    if(flag)
+    {
+        flag = 0;
+        led_state(ON);
+    }
+    else
+    {
+        flag = 1;
+        led_state(OFF);
+    }
+    
+}
+
 void main(void) {
-    init();
+    /*开启中断*/
+    INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
+    INTEnableInterrupts();
 
-    start_flash();
-
-    //    T1CONbits.ON = 0;
-    //    T1CONbits.TCS = 0;
-    //    T1CONbits.TCKPS = 0;
-    //    TMR1 = 0x0;
-    //    PR1 = 0xFFFF;
-    //    T1CONSET = 1; 
-    //    IFS0bits.T1IF = 0;
-    //    IPC1bits.T1
-
+    led_init();
+    led_state(ON);
+    led_write(0b01010101);
+    
+    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    TIMER_RequestTick(testhandler, 1000);
+    
+    while(1)
+    {
+        
+    }
     return;
 }

@@ -15,23 +15,23 @@
 # $ makeMP_CC="/opt/microchip/mplabc30/v3.30c/bin/pic30-gcc" ...  
 #
 SHELL=cmd.exe
-PATH_TO_IDE_BIN=F:/Microchip/MPLABX/v3.30/mplab_ide/mplab_ide/modules/../../bin/
+PATH_TO_IDE_BIN=D:/MyProgram/mplab/mplab_ide/mplab_ide/modules/../../bin/
 # Adding MPLAB X bin directory to path.
-PATH:=F:/Microchip/MPLABX/v3.30/mplab_ide/mplab_ide/modules/../../bin/:$(PATH)
+PATH:=D:/MyProgram/mplab/mplab_ide/mplab_ide/modules/../../bin/:$(PATH)
 # Path to java used to run MPLAB X when this makefile was created
-MP_JAVA_PATH="F:\Microchip\MPLABX\v3.30\sys\java\jre1.8.0_65/bin/"
+MP_JAVA_PATH="D:\MyProgram\mplab\sys\java\jre1.8.0_65/bin/"
 OS_CURRENT="$(shell uname -s)"
-MP_CC="F:\Microchip\xc32\v1.43\bin\xc32-gcc.exe"
-MP_CPPC="F:\Microchip\xc32\v1.43\bin\xc32-g++.exe"
+MP_CC="D:\MyProgram\Microchip\xc32\v2.05\bin\xc32-gcc.exe"
+MP_CPPC="D:\MyProgram\Microchip\xc32\v2.05\bin\xc32-g++.exe"
 # MP_BC is not defined
-MP_AS="F:\Microchip\xc32\v1.43\bin\xc32-as.exe"
-MP_LD="F:\Microchip\xc32\v1.43\bin\xc32-ld.exe"
-MP_AR="F:\Microchip\xc32\v1.43\bin\xc32-ar.exe"
-DEP_GEN=${MP_JAVA_PATH}java -jar "F:/Microchip/MPLABX/v3.30/mplab_ide/mplab_ide/modules/../../bin/extractobjectdependencies.jar"
-MP_CC_DIR="F:\Microchip\xc32\v1.43\bin"
-MP_CPPC_DIR="F:\Microchip\xc32\v1.43\bin"
+MP_AS="D:\MyProgram\Microchip\xc32\v2.05\bin\xc32-as.exe"
+MP_LD="D:\MyProgram\Microchip\xc32\v2.05\bin\xc32-ld.exe"
+MP_AR="D:\MyProgram\Microchip\xc32\v2.05\bin\xc32-ar.exe"
+DEP_GEN=${MP_JAVA_PATH}java -jar "D:/MyProgram/mplab/mplab_ide/mplab_ide/modules/../../bin/extractobjectdependencies.jar"
+MP_CC_DIR="D:\MyProgram\Microchip\xc32\v2.05\bin"
+MP_CPPC_DIR="D:\MyProgram\Microchip\xc32\v2.05\bin"
 # MP_BC_DIR is not defined
-MP_AS_DIR="F:\Microchip\xc32\v1.43\bin"
-MP_LD_DIR="F:\Microchip\xc32\v1.43\bin"
-MP_AR_DIR="F:\Microchip\xc32\v1.43\bin"
+MP_AS_DIR="D:\MyProgram\Microchip\xc32\v2.05\bin"
+MP_LD_DIR="D:\MyProgram\Microchip\xc32\v2.05\bin"
+MP_AR_DIR="D:\MyProgram\Microchip\xc32\v2.05\bin"
 # MP_BC_DIR is not defined
