@@ -166,7 +166,7 @@ void TIMER_Start(TICK_HANDLER handle)
     uint8_t i;
     for(i = 0; i < TIMER_MAX_1MS_CLIENTS; i++)
     {
-        if(requests[i].handle != NULL)
+        if(requests[i].handle == handle)
         {
            requests[i].enable = true;
         }
@@ -177,7 +177,7 @@ void TIMER_Stop(TICK_HANDLER handle)
     uint8_t i;
     for(i = 0; i < TIMER_MAX_1MS_CLIENTS; i++)
     {
-        if(requests[i].handle != NULL)
+        if(requests[i].handle == handle)
         {
            requests[i].enable = false;
         }

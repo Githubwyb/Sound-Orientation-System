@@ -43,16 +43,19 @@ void main(void) {
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
 
+    /*必须放在前面，因为后面初始化用到timer*/
+    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    
     led_init();
     UART1Config();
 
     led_state(ON);
-    print("hello world~\r\n");
-    LOG_DEBUG("here");
-    
-    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    //TIMER_RequestTick(testhandler, 1000);
-    //TIMER_Start(testhandler);
+    //print("hello world~\r\n");
+    LOG_DEBUG("hello world");
+
+//    
+//    TIMER_RequestTick(testhandler, 10);
+//    TIMER_Start(testhandler);
     
     while(1)
     {
