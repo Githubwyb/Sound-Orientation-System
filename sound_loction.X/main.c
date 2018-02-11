@@ -52,6 +52,7 @@ void main(void) {
     
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     //TIMER_RequestTick(testhandler, 1000);
+    //TIMER_Start(testhandler);
     
     while(1)
     {

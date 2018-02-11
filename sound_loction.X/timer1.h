@@ -20,9 +20,12 @@ typedef enum
 
 void TIMER_CancelTick(TICK_HANDLER handle);
 
-void TIMER_ResetTick(TICK_HANDLER handle);
+void TIMER_ResetCount(TICK_HANDLER handle);
 
 bool TIMER_RequestTick(TICK_HANDLER handle, uint32_t rate);
+
+void TIMER_Start(TICK_HANDLER handle);
+void TIMER_Stop(TICK_HANDLER handle);
 
 bool TIMER_SetConfiguration(TIMER_CONFIGURATIONS configuration);
 

@@ -35,6 +35,9 @@ struct UART1_TX_EN  *uart1_tx   = &uart_tx_en;
 struct UART1_RX_EN  uart_rx_en  = {0,{0}};
 struct UART1_RX_EN  *uart1_rx   = &uart_rx_en;
 
+static int uart1_data_received_proc(const char *buf, uint16_t len);
+static void uart1_RX_timeout_proc( void );
+
 
 /*使用UART1作为调试口*/
 void UART1Config( void )
@@ -67,6 +70,8 @@ void UART1Config( void )
     /* 使能UART模块，使能发送，使能接收 */
     UARTEnable( UART1, UART_ENABLE_FLAGS( UART_PERIPHERAL | UART_RX | UART_TX ) );  
 
+    /*注册一个10ms超时回调*/
+    TIMER_RequestTick(uart1_RX_timeout_proc, 10);
     //发送空字节
     //INTClearFlag( INT_SOURCE_UART_TX( UART1 ) );
     //UARTSendDataByte(UART1, 0x00);
@@ -85,7 +90,7 @@ static void uart1_RX_timeout_proc( void )
     
     uart1_rx->length = 0;
     memset(uart1_rx->buffer, 0, UART1_BUFFER_LEN);
-    TIMER_CancelTick(uart1_RX_timeout_proc);
+    TIMER_Stop(uart1_RX_timeout_proc);
 }
 
 static void uart1_TX_interrupt_proc( void )
@@ -120,8 +125,9 @@ static void uart1_RX_interrupt_proc( void )
         INTClearFlag( INT_SOURCE_UART_RX( UART1 ) );
     }
 
-    /*设置10ms超时*/
-    TIMER_RequestTick(uart1_RX_timeout_proc, 10);
+    /*重新设置10ms超时*/
+    TIMER_ResetCount(uart1_RX_timeout_proc);
+    TIMER_Start(uart1_RX_timeout_proc );
 }
 
 void uart1_sendData( uint8_t *data, uint16_t length )
