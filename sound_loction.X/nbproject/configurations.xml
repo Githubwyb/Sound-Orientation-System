@@ -2,18 +2,18 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles" displayName="头文件" projectFiles="true">
+      <itemPath>timer1.h</itemPath>
+      <itemPath>uart1.h</itemPath>
+      <itemPath>led.h</itemPath>
+      <itemPath>log.h</itemPath>
+      <itemPath>protocol.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
       <itemPath>led.c</itemPath>
-      <itemPath>led.h</itemPath>
       <itemPath>timer1.c</itemPath>
-      <itemPath>timer1.h</itemPath>
-      <itemPath>protocol.h</itemPath>
       <itemPath>log.c</itemPath>
-      <itemPath>log.h</itemPath>
       <itemPath>uart1.c</itemPath>
-      <itemPath>uart1.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>

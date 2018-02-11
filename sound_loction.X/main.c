@@ -2,8 +2,6 @@
 #include <stdint.h>
 #include <plib.h>
 
-#include "bit_operation.h"
-#include "led_drive.h"
 #include "protocol.h"
 #include "timer1.h"
 #include "led.h"
@@ -51,9 +49,9 @@ void main(void) {
     led_state(ON);
     print("hello world~\r\n");
     LOG_DEBUG("here");
-
-    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    TIMER_RequestTick(testhandler, 1000);
+    
+    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    //TIMER_RequestTick(testhandler, 1000);
     
     while(1)
     {

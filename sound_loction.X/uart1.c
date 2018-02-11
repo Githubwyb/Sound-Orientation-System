@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "log.h"
+#include "uart1.h"
 #include "timer1.h"
 #include "protocol.h"
 
