@@ -1,111 +1,101 @@
-#include "log.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include "uart1.h"
 
-#define pbclk		5529600
-#define desired_rate	9600
-
-/**********************************************************************************************
- * *函数名 字: UART1Config
- * *功能描 述:串口1硬件驱动配置
- * *调用模块: 使用内部8M FRC作为时钟源+  8分频 =  1 M 外设时钟
- *     里的串口驱动部分
- ***********************************************************************************************/
-void UART1Config( void )
+int print(const char* fmt, ...)
 {
-    ANSELA =0;
-    TRISBbits.TRISB4 = 0;//TX
-    TRISAbits.TRISA4 = 1;//RX
+    char buf[1024] = {0};
+    int length = 0;
+
+    va_list arg;
+    va_start (arg, fmt);
+    vsnprintf(buf, 1024, fmt, arg);
+    va_end (arg);
+
+    length = strlen(buf);
     
-    PPSInput(3,U1RX, RPA4);
-    PPSOutput(1,RPB4,U1TX);
-
-	/* 配置和使能UART1, 关闭CTS, RTS数据流信号，只启用TX,RX */
-	UARTConfigure( UART1, UART_ENABLE_PINS_TX_RX_ONLY );
-	/*
-	 * 设置FIFO中断方式
-	 * TX FIFO缓冲区未填充满时中断-- 缓冲区未填满。
-	 * RX缓冲器非空时中断-- 缓冲区有数据。
-	 */
-	UARTSetFifoMode( UART1,
-			 UART_INTERRUPT_ON_TX_NOT_FULL
-			 | UART_INTERRUPT_ON_RX_NOT_EMPTY );
-	/* 设置为数据位8，无校验位，1位停止位 */
-	UARTSetLineControl( UART1, UART_DATA_SIZE_8_BITS | UART_PARITY_NONE | UART_STOP_BITS_1 );
-	/* 设置波特率，后面两个参数分别是PBCLK和期望的波特率 */
-	UARTSetDataRate( UART1, pbclk, desired_rate );
-
-
-
-/* 配置UART1接收中断 */
-	INTEnable( INT_SOURCE_UART_RX( UART1 ), INT_ENABLED );
-	INTSetVectorPriority( INT_VECTOR_UART( UART1 ), INT_PRIORITY_LEVEL_2 );
-	INTSetVectorSubPriority( INT_VECTOR_UART( UART1 ), INT_SUB_PRIORITY_LEVEL_0 );
-
-    /* 使能UART模块，使能发送，使能接收 */
-    UARTEnable( UART1, UART_ENABLE_FLAGS( UART_PERIPHERAL | UART_RX | UART_TX ) );
-        
+    uart1_sendData((const unsigned char *)buf, length);
+    return 0;
 }
 
-/**********************************************************************************************
- * *函数名 字: WriteString(const char *string)
- * *功能描 述: UART1数据流发送函数
- * *输      入: string -- 需要发送的字符串
- ***********************************************************************************************/
-void WriteString( const char *string )
+/*
+ * The hex log is in the following format:
+ *
+ *     0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F      0123456789ABCDEF
+ * 01  aa 55 01 00 00 00 25 00 38 36 35 30 36 37 30 32     .U....%.86506702
+ * 02  30 34 39 30 31 36 38 30 00 00 00 00 00 00 00 00     04901680........
+ * 03  00 00 00 00 00 00 00 00 00 00 00 00                 ............
+ *
+ */
+void log_hex(const char* data, int length)
 {
-	while ( *string != '\0' )
-	{
-		while ( !UARTTransmitterIsReady( UART1 ) );
-		UARTSendDataByte( UART1, *string );
-		string++;
-		while ( !UARTTransmissionHasCompleted( UART1 ) );
-	}
-}
+    int i = 0, j = 0;
 
-/**********************************************************************************************
- * *函数名 字: PutCharacter(const char character)
- * *功能描 述: UART1发送单字节字符函数
- ***********************************************************************************************/
-
-void PutCharacter( const char character )
-{
-	while ( !UARTTransmitterIsReady( UART1 ) );
-	UARTSendDataByte( UART1, character );
-	while ( !UARTTransmissionHasCompleted( UART1 ) );
-}
-#include "led.h"
-void testhandler(void)
-{
-    static u8 flag = 0;
-    if(flag)
+    print("    ");
+    for (i  = 0; i < 16; i++)
     {
-        flag = 0;
-        led_state(ON);
+        print("%X  ", i);
     }
-    else
+    print("    ");
+    for (i = 0; i < 16; i++)
     {
-        flag = 1;
-        led_state(OFF);
+        print("%X", i);
     }
-    
+
+    print("\r\n");
+
+    for (i = 0; i < length; i += 16)
+    {
+        print("%02d  ", i / 16 + 1);
+        for (j = i; j < i + 16 && j < length; j++)
+        {
+            print("%02x ", data[j] & 0xff);
+        }
+        if (j == length && length % 16)
+        {
+            for (j = 0; j < (16 - length % 16); j++)
+            {
+                print("   ");
+            }
+        }
+        print("    ");
+        for (j = i; j < i + 16 && j < length; j++)
+        {
+            if (data[j] < 32 || data[j] >= 127)
+            {
+                print(".");
+            }
+            else
+            {
+                print("%c", data[j] & 0xff);
+            }
+        }
+
+        print("\r\n");
+    }
 }
 
-/* Specify Interrupt Priority Level = 2, Vector 49 */
-void __ISR( _UART_1_VECTOR, ipl2 ) _UART1_TX_handle( void )
+/*
+ * 打印二进制数据接口
+ * 当前仅支持打印前32个字节的二进制数据
+ */
+#define MAX_PRINTED_BIN_LENGTH (64)
+void log_binary(const char* data, int length)
 {
-	unsigned char Receivedata;
-/* Is this an RX interrupt? */
-	if ( INTGetFlag( INT_SOURCE_UART_RX( UART1 ) ) )
-	{
-/* 发送接受到的数据，用于验证通信是否正确 */
-		PutCharacter( UARTGetDataByte( UART1 ) );
-/* 清除接收中断标志 */
-		INTClearFlag( INT_SOURCE_UART_RX( UART1 ) );
-/* 点亮接收数据指示灯，用以表示接收数据成功 */
-		testhandler();
-	}
-/* 我们不关心发送中断 */
-	if ( INTGetFlag( INT_SOURCE_UART_TX( UART1 ) ) )
-	{
-		INTClearFlag( INT_SOURCE_UART_TX( UART1 ) );
-	}
+    char buf[MAX_PRINTED_BIN_LENGTH * 3 + 1] = {0};
+    int i = 0;
+
+    for (i = 0; i < length && i < MAX_PRINTED_BIN_LENGTH; i++)
+    {
+        sprintf(buf + i * 3, "%02X", data[i]);
+        buf[i * 3 + 2] = ' ';   //because sprintf will add a terminating null character at the end
+    }
+
+    if (i >= MAX_PRINTED_BIN_LENGTH)
+    {
+        sprintf(buf + i * 3, "%s", "......\n");
+    }
+
+    print("%s", buf);
 }

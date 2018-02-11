@@ -2,11 +2,8 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="HeaderFiles" displayName="头文件" projectFiles="true">
-      <itemPath>bit_operation.h</itemPath>
-      <itemPath>led_drive.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
-      <itemPath>led_drive.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>led.c</itemPath>
       <itemPath>led.h</itemPath>
@@ -15,6 +12,8 @@
       <itemPath>protocol.h</itemPath>
       <itemPath>log.c</itemPath>
       <itemPath>log.h</itemPath>
+      <itemPath>uart1.c</itemPath>
+      <itemPath>uart1.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>

@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=led_drive.c main.c led.c timer1.c log.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c led.c timer1.c log.c uart1.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/led_drive.o ${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/led_drive.o.d ${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d ${OBJECTDIR}/uart1.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/led_drive.o ${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o
 
 # Source Files
-SOURCEFILES=led_drive.c main.c led.c timer1.c log.c
+SOURCEFILES=main.c led.c timer1.c log.c uart1.c
 
 
 CFLAGS=
@@ -100,12 +100,6 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
-${OBJECTDIR}/led_drive.o: led_drive.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/led_drive.o.d 
-	@${RM} ${OBJECTDIR}/led_drive.o 
-	@${FIXDEPS} "${OBJECTDIR}/led_drive.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/led_drive.o.d" -o ${OBJECTDIR}/led_drive.o led_drive.c    -legacy-libc  $(COMPARISON_BUILD) 
-	
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -130,13 +124,13 @@ ${OBJECTDIR}/log.o: log.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/log.o 
 	@${FIXDEPS} "${OBJECTDIR}/log.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/log.o.d" -o ${OBJECTDIR}/log.o log.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
-else
-${OBJECTDIR}/led_drive.o: led_drive.c  nbproject/Makefile-${CND_CONF}.mk
+${OBJECTDIR}/uart1.o: uart1.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
-	@${RM} ${OBJECTDIR}/led_drive.o.d 
-	@${RM} ${OBJECTDIR}/led_drive.o 
-	@${FIXDEPS} "${OBJECTDIR}/led_drive.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/led_drive.o.d" -o ${OBJECTDIR}/led_drive.o led_drive.c    -legacy-libc  $(COMPARISON_BUILD) 
+	@${RM} ${OBJECTDIR}/uart1.o.d 
+	@${RM} ${OBJECTDIR}/uart1.o 
+	@${FIXDEPS} "${OBJECTDIR}/uart1.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/uart1.o.d" -o ${OBJECTDIR}/uart1.o uart1.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
+else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.o.d 
@@ -160,6 +154,12 @@ ${OBJECTDIR}/log.o: log.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/log.o.d 
 	@${RM} ${OBJECTDIR}/log.o 
 	@${FIXDEPS} "${OBJECTDIR}/log.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/log.o.d" -o ${OBJECTDIR}/log.o log.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/uart1.o: uart1.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/uart1.o.d 
+	@${RM} ${OBJECTDIR}/uart1.o 
+	@${FIXDEPS} "${OBJECTDIR}/uart1.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/uart1.o.d" -o ${OBJECTDIR}/uart1.o uart1.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

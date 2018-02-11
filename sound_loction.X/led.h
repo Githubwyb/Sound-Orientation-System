@@ -34,6 +34,7 @@ typedef struct {
 void led_init(void);
 
 volatile ST_LED_bits LEDbits __asm__ ("LATB") __attribute__((section("sfrs"), address(0xBF886130)));
+
 void led_set(u8 led, ENUM_LED_LEVEL sw);
 void led_write(u8 s);
 

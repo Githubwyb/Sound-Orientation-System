@@ -5,9 +5,10 @@
 
 #include <peripheral/timer.h>
 #include "timer1.h"
+#include "protocol.h"
 
 #ifndef SYSTEM_PERIPHERAL_CLOCK
-#define SYSTEM_PERIPHERAL_CLOCK 5529600
+#define SYSTEM_PERIPHERAL_CLOCK F_PB_CLK
 #endif
 
 /*自动计算timer1重装载值*/
@@ -92,6 +93,31 @@ void TIMER_CancelTick(TICK_HANDLER handle)
         if(requests[i].handle == handle)
         {
             requests[i].handle = NULL;
+        }
+    }
+}
+
+/*********************************************************************
+* Function: void TIMER_CancelTick(TICK_HANDLER handle)
+*
+* Overview: Reset a tick request.
+*
+* PreCondition: delta t = 1ms
+*
+* Input:  handle - the function that was handling the tick request
+*
+* Output: None
+*
+********************************************************************/
+void TIMER_ResetTick(TICK_HANDLER handle)
+{
+    uint8_t i;
+
+    for(i = 0; i < TIMER_MAX_1MS_CLIENTS; i++)
+    {
+        if(requests[i].handle == handle)
+        {
+            requests[i].count = 0;
         }
     }
 }
