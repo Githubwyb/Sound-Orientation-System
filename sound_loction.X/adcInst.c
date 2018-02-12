@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "log.h"
+#include "led.h"
 ST_ADC_RESULT adc_result = {0};
 void adc_getData_handler(void)
 {
@@ -15,6 +16,7 @@ void adc_getData_handler(void)
         sum += temp;
     }
     adc_result.v_avg = sum/16;
+    SetDCOC3PWM(adc_result.v_avg);
     //LOG_DEBUG("ave \t= %u, v \t= %.4f\r\n", adc_result.v_avg, ADC_VREF * (float)adc_result.v_avg/1024.0f);
 }
 

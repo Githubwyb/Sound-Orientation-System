@@ -52,8 +52,8 @@ void led_state_init(void)
     TRISBbits.TRISB14 = 0;
     PPSOutput(4, RPB14, OC3);
     
-    OpenTimer3(T3_ON, 1024);
-    OpenOC3( OC_ON | OC_TIMER_MODE16 | OC_TIMER3_SRC | OC_CONTINUE_PULSE | OC_LOW_HIGH , 1024, 1024- 0);
+    OpenTimer3(T3_ON, 1025);//1025-1 = 1024
+    OpenOC3( OC_ON | OC_TIMER_MODE16 | OC_TIMER3_SRC | OC_CONTINUE_PULSE | OC_CONTINUE_PULSE , 1024, 1025);
     
     //led_state_setLevel(1024);
 }
@@ -61,6 +61,7 @@ void led_state_init(void)
 /*控制ledstate的亮度，亮度等级为0~255*/
 void led_state_setLevel(u16 level)
 {
-    SetPulseOC3(1024 - level, 1024);
+    //SetPulseOC3(level, 1024);
+    SetDCOC3PWM(level);
 }
 
