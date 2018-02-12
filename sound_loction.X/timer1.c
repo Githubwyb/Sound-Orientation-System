@@ -66,6 +66,7 @@ typedef struct
     TICK_HANDLER handle;
     uint32_t rate;
     uint32_t count;
+    bool enable;
 } TICK_REQUEST;
 
 /* Variables *******************************************************/
@@ -98,7 +99,7 @@ void TIMER_CancelTick(TICK_HANDLER handle)
 }
 
 /*********************************************************************
-* Function: void TIMER_CancelTick(TICK_HANDLER handle)
+* Function: void TIMER_ResetCount(TICK_HANDLER handle)
 *
 * Overview: Reset a tick request.
 *
@@ -109,7 +110,7 @@ void TIMER_CancelTick(TICK_HANDLER handle)
 * Output: None
 *
 ********************************************************************/
-void TIMER_ResetTick(TICK_HANDLER handle)
+void TIMER_ResetCount(TICK_HANDLER handle)
 {
     uint8_t i;
 
@@ -151,12 +152,36 @@ bool TIMER_RequestTick ( TICK_HANDLER handle , uint32_t rate )
             requests[i].handle = handle;
             requests[i].rate = rate;
             requests[i].count = 0;
-
+            requests[i].enable = false;
             return true;
         }
     }
 
     return false;
+}
+
+
+void TIMER_Start(TICK_HANDLER handle)
+{
+    uint8_t i;
+    for(i = 0; i < TIMER_MAX_1MS_CLIENTS; i++)
+    {
+        if(requests[i].handle == handle)
+        {
+           requests[i].enable = true;
+        }
+    }
+}
+void TIMER_Stop(TICK_HANDLER handle)
+{
+    uint8_t i;
+    for(i = 0; i < TIMER_MAX_1MS_CLIENTS; i++)
+    {
+        if(requests[i].handle == handle)
+        {
+           requests[i].enable = false;
+        }
+    }
 }
 
 /*********************************************************************
@@ -222,7 +247,10 @@ void __ISR(_TIMER_1_VECTOR, ipl3) _Timer1Handler(void)
     {
         if(requests[i].handle != NULL)
         {
-            requests[i].count++;
+            if(requests[i].enable)
+            {
+                requests[i].count++;
+            }
             
             if(requests[i].count == requests[i].rate)
             {

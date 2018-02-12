@@ -60,5 +60,3 @@ void led_write(u8 s)
     LEDbits.D6 = (bool)(s & (0x01 <<6));   
     LEDbits.D7 = (bool)(s & (0x01 <<7));
 }
-
-

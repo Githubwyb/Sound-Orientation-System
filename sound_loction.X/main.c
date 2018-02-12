@@ -39,25 +39,26 @@
 /************************************************************************************************************/
 
 void main(void) {
+    LOG_DEBUG("hello world");
+
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
 
+    /*必须放在前面，因为后面初始化用到timer*/
+    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+
     led_init();
     UART1Config();
 
-    led_state(ON);
-    print("hello world~\r\n");
-    LOG_DEBUG("here");
 
-    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    //TIMER_RequestTick(testhandler, 1000);
+    led_state(ON);
 
     CVREFOpen(CVREF_ENABLE | CVREF_OUTPUT_DISABLE | CVREF_RANGE_HIGH | CVREF_SOURCE_AVDD | CVREF_STEP_13);
     // CMP2ConfigInt(mCMP2ClearIntFlag() | mCMP2SetIntPriority(7) | mCMP2SetIntSubPriority(3) | CMP_INT_ENABLE);
     // CMP2Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_HIGH_TO_LOW | CMP_POS_INPUT_CVREF | CMP1_NEG_INPUT_C1IN_POS);
     CMP2Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_NONE | CMP_POS_INPUT_CVREF | CMP1_NEG_INPUT_C1IN_POS);
-    
+
     while(1)
     {
         if(!CMP2Read())
@@ -67,7 +68,6 @@ void main(void) {
             for (i = 0; i < 3000000; i++);
             led_write(0);
         }
-        
     }
 
     CMP2Close();
