@@ -11,7 +11,7 @@
 #define UART1_INT_PRIOR       INT_PRIORITY_LEVEL_1
 #define UART1_INT_SUB_PRIOR   INT_SUB_PRIORITY_LEVEL_0
 
-#define UART1_BUFFER_LEN (512)
+#define UART1_BUFFER_LEN (1024*2)
 
 #define UART1_TX_INT_ENABLE  INTEnable( INT_SOURCE_UART_TX( UART1 ), INT_ENABLED )
 #define UART1_TX_INT_DISABLE INTEnable( INT_SOURCE_UART_TX( UART1 ), INT_DISABLED )
@@ -39,7 +39,7 @@ int uart1_data_received_proc(const char *buf, uint16_t len);
 void uart1_RX_timeout_proc( void );
 
 /*使用UART1作为调试口*/
-void UART1Config( void )
+void uart1_init( void )
 {
     /*重映射UART1端口，TX->RB4, RX->RA4*/
     TRISBbits.TRISB4 = 0;//TX

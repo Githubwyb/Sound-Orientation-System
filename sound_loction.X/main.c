@@ -37,6 +37,13 @@
 #pragma config FWDTEN = OFF             // Watchdog Timer Enable (WDT Disabled (SWDTEN Bit Controls))
 #pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
 /************************************************************************************************************/
+    unsigned int channel4;    // conversion result as read from result buffer
+    unsigned int channel5;    // conversion result as read from result buffer
+    unsigned int offset;    // buffer offset to point to the base of the idle buffer
+void timer_test_handler()
+{
+    LOG_DEBUG("chan4:%u, chan5:%u", channel4, channel5);
+}
 
 void main(void) {
     /*开启中断*/
@@ -47,19 +54,12 @@ void main(void) {
     TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     
     led_init();
-    UART1Config();
-
+    uart1_init();
+    adc_init();
+    
     led_state(ON);
     //print("hello world~\r\n");
     LOG_DEBUG("hello world");
-
-//    
-//    TIMER_RequestTick(testhandler, 10);
-//    TIMER_Start(testhandler);
     
-    while(1)
-    {
-        
-    }
     return;
 }
