@@ -57,9 +57,31 @@ void main(void) {
     uart1_init();
     adc_init();
     
-    led_state(ON);
+    //led_state(ON);
     //print("hello world~\r\n");
     LOG_DEBUG("hello world");
     
+    
+    
+    unsigned int i = 1, z, pwm = 125;  
+
+    PPSOutput(4, RPB14, OC3);  // Set OC4 to RPA3 with peripheral pin select  
+
+    //ConfigIntOC3(OC_INT_OFF|OC_INT_SUB_PRI_0|OC_INT_PRIOR_0);
+    /* Enable OC | 32 bit Mode  | Timer2 is selected | Continuous O/P   | OC Pin High , S Compare value, Compare value*/  
+    OpenOC3(OC_ON | OC_IDLE_CON| OC_TIMER_MODE16| OC_TIMER2_SRC| OC_HIGH_LOW, 0, 0);  
+    /* Open Timer2 with Period register value */  
+    OpenTimer2(T2_ON | T2_PS_1_256 | T2_SOURCE_INT, 0x100);  
+  
+    // Now blink LEDs ON/OFF forever.  
+    while (1)  
+    {  
+        // Insert some delay  
+        for (z = 0; z < 1024 * 256; z++)  ;  
+        SetDCOC3PWM(pwm++); // Write new duty cycle  
+        if (pwm > 255)  
+            pwm = 0;  
+    } 
+     
     return;
 }

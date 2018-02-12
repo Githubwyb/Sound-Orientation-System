@@ -11,9 +11,9 @@ void led_init(void)
     TRISBbits.TRISB7  = 0;
     TRISBbits.TRISB8  = 0;
     
-    TRISBbits.TRISB14 = 0;
+    //TRISBbits.TRISB14 = 0;
     
-    led_state(OFF);
+    //led_state(OFF);
 }
 
 void led_set(u8 led, ENUM_LED_LEVEL sw)
