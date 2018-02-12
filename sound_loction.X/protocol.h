@@ -12,4 +12,6 @@
 #define bitset(var, bit) ((var) |= (1 << (bit)))
 #define bitclr(var, bit) ((var) &= ~(1 << (bit)))
 
+unsigned char* string_trimLeft(const unsigned char* string);
+
 #endif 

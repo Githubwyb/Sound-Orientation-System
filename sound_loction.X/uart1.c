@@ -3,6 +3,7 @@
 #include "log.h"
 #include "uart1.h"
 #include "timer1.h"
+#include "debug.h"
 #include "protocol.h"
 
 #define PBCLK		    F_PB_CLK
@@ -80,16 +81,11 @@ void uart1_init( void )
     //UARTSendDataByte(UART1, 0x00);
 }
 
-int uart1_data_received_proc(const char *buf, uint16_t len)
-{
-    /*do sth*/
-    uart1_sendData( buf, len);
-    return 0;
-}
-
 void uart1_RX_timeout_proc( void )
 {
-    uart1_data_received_proc(uart1_rx->buffer, uart1_rx->length);
+
+    debug_proc(uart1_rx->buffer, uart1_rx->length);
+    
     uart1_rx->length = 0;
     memset(uart1_rx->buffer, 0, UART1_BUFFER_LEN);
     TIMER_Stop(uart1_RX_timeout_proc);
