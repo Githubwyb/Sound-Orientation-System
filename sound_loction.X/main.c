@@ -53,11 +53,15 @@ void main(void) {
 
     led_state(ON);
 
-    CVREFOpen(CVREF_ENABLE | CVREF_OUTPUT_DISABLE | CVREF_RANGE_HIGH | CVREF_SOURCE_AVDD | CVREF_STEP_13);
-    CMP2Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_HIGH_TO_LOW | CMP_POS_INPUT_CVREF | CMP2_NEG_INPUT_C2IN_POS);
+    CVREFOpen(CVREF_ENABLE | CVREF_OUTPUT_DISABLE | CVREF_RANGE_HIGH | CVREF_SOURCE_AVDD | CVREF_STEP_8);
 //    CMP2Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_LOW_TO_HIGH | CMP_POS_INPUT_C2IN_POS | CMP2_NEG_INPUT_IVREF);
+    
+    CMP2Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_HIGH_TO_LOW | CMP_POS_INPUT_CVREF | CMP2_NEG_INPUT_C2IN_POS);
     CMP2ConfigInt(mCMP2ClearIntFlag() | mCMP2SetIntPriority(7) | mCMP2SetIntSubPriority(2) | CMP_INT_ENABLE);
 
+    CMP1Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_HIGH_TO_LOW | CMP_POS_INPUT_CVREF | CMP1_NEG_INPUT_C1IN_POS);
+    CMP1ConfigInt(mCMP1ClearIntFlag() | mCMP1SetIntPriority(7) | mCMP1SetIntSubPriority(2) | CMP_INT_ENABLE);
+    
     INTEnableSystemMultiVectoredInt();
 
     while(1)
@@ -77,7 +81,18 @@ void __ISR(_COMPARATOR_2_VECTOR, ipl7) _MK3RecievedSound(void)
 {
     led_set(6, ON);
     int i;
-    for (i = 0; i < 3000000; i ++);
+    for (i = 0; i < 5000000; i ++);
     led_set(6, OFF);
+    mCMP2ClearIntFlag();
+    mCMP1ClearIntFlag();
+}
+
+void __ISR(_COMPARATOR_1_VECTOR, ipl7) _MK2RecievedSound(void)
+{
+    led_set(3, ON);
+    int i;
+    for (i = 0; i < 5000000; i ++);
+    led_set(3, OFF);
+    mCMP1ClearIntFlag();
     mCMP2ClearIntFlag();
 }
