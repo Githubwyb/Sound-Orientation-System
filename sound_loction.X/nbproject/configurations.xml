@@ -7,6 +7,7 @@
       <itemPath>led.h</itemPath>
       <itemPath>log.h</itemPath>
       <itemPath>protocol.h</itemPath>
+      <itemPath>cmp3.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
