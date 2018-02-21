@@ -6,7 +6,6 @@
 #include "timer1.h"
 #include "led.h"
 #include "log.h"
-
 #include "cmp3.h"
 
 //11.0592MHz = 115200*96

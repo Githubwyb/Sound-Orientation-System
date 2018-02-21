@@ -1,9 +1,6 @@
 #ifndef _EXAMPLE_FILE_NAME_H    /* Guard against multiple inclusion */
 #define _EXAMPLE_FILE_NAME_H
 
-#include <xc.h>
-#include <peripheral/int.h>
-
 #define CMP3Open(config)  (CM3CON = (config)&0xFFFF, CMSTATCLR = _CMSTAT_SIDL_MASK, CMSTATSET = ((config)>>29))
 
 #define CMP_POS_INPUT_C3IN_POS  (0)
