@@ -9,5 +9,5 @@ typedef struct
 }ST_ADC_RESULT;
 
 void adc_init(void);
-
+void adc2_init(void);
 #endif

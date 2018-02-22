@@ -52,7 +52,7 @@ void main(void) {
     led_init();
     led_state_init();
     uart1_init();
-    adc_init();
+    adc2_init();
     
     //print("hello world~\r\n");
     LOG_DEBUG("hello world");
