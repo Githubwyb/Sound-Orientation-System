@@ -1,7 +1,8 @@
 #include "led.h"
 #include <stdbool.h>
+
 void led_init(void)
-{    
+{
     TRISBbits.TRISB9  = 0;
     TRISBbits.TRISB10 = 0;
     TRISBbits.TRISB11 = 0;

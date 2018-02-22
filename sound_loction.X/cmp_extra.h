@@ -1,5 +1,5 @@
-#ifndef _EXAMPLE_FILE_NAME_H    /* Guard against multiple inclusion */
-#define _EXAMPLE_FILE_NAME_H
+#ifndef __CMP_EXTRA_H    /* Guard against multiple inclusion */
+#define __CMP_EXTRA_H
 
 #define CMP3Open(config)  (CM3CON = (config)&0xFFFF, CMSTATCLR = _CMSTAT_SIDL_MASK, CMSTATSET = ((config)>>29))
 
@@ -13,4 +13,6 @@
 
 #define CMP3ConfigInt(config)  ( mCMP3ClearIntFlag(), mCMP3SetIntPriority((config)&7), mCMP3SetIntSubPriority(((config) >> 4)&3), mCMP3IntEnable((config) >> 15) )
 
-#endif /* _EXAMPLE_FILE_NAME_H */
+void cmp_init();
+
+#endif /* __CMP_EXTRA_H */

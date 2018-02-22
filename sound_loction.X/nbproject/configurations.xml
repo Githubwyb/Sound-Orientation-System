@@ -7,7 +7,7 @@
       <itemPath>led.h</itemPath>
       <itemPath>log.h</itemPath>
       <itemPath>protocol.h</itemPath>
-      <itemPath>cmp3.h</itemPath>
+      <itemPath>cmp_extra.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
@@ -15,6 +15,7 @@
       <itemPath>timer1.c</itemPath>
       <itemPath>log.c</itemPath>
       <itemPath>uart1.c</itemPath>
+      <itemPath>cmp_extra.c</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>
@@ -35,7 +36,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC32</languageToolchain>
-        <languageToolchainVersion>1.43</languageToolchainVersion>
+        <languageToolchainVersion>2.05</languageToolchainVersion>
         <platform>3</platform>
       </toolsSet>
       <compileType>
@@ -50,6 +51,8 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
+        <subordinates>
+        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
