@@ -62,8 +62,9 @@ void main(void) {
 
     }
 
+    CMP1Close();
     CMP2Close();
-    CVREFClose();
+    CMP3Close();
     led_state(OFF);
 
     return;

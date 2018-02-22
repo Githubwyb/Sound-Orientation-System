@@ -4,6 +4,15 @@
 
 #include "cmp_extra.h"
 #include "led.h"
+#include "protocol.h"
+
+void refreshRecord();
+void outputError();
+void calculateLED();
+void recordEvent(int MK);
+
+int eventNum = 0;
+int eventSeq[3] = {MK_NONE, MK_NONE, MK_NONE};
 
 void cmp_init()
 {
@@ -15,40 +24,107 @@ void cmp_init()
 
     CMP3Open(CMP_ENABLE | CMP_OUTPUT_NONINVERT | CMP_OUTPUT_DISABLE | CMP_RUN_IN_IDLE | CMP_EVENT_LOW_TO_HIGH | CMP_POS_INPUT_C3IN_POS | CMP3_NEG_INPUT_IVREF);
     CMP3ConfigInt(mCMP3ClearIntFlag() | mCMP3SetIntPriority(7) | mCMP3SetIntSubPriority(3) | CMP_INT_ENABLE);
+}
 
+void refreshRecord()
+{
+    eventNum = 0;
+    eventSeq[0] = MK_NONE;
+    eventSeq[1] = MK_NONE;
+    eventSeq[2] = MK_NONE;
+    
+    mCMP1IntEnable(1);
+    mCMP2IntEnable(1);
+    mCMP3IntEnable(1);
+}
+
+void outputLED(u8 x)
+{
+    led_set(x, ON);
+    int i;
+    for (i = 0; i < 5000000; i ++);
+    led_set(x, OFF);
+}
+
+void outputError()
+{
+//    led_state(OFF);
+//    int i;
+//    for (i = 0; i < 10000; i ++);
+//    led_state(ON);
+}
+
+void calculateLED()
+{
+    if(eventSeq[0] == MK1)
+    {
+        if(eventSeq[1] == MK2 && eventSeq[2] == MK3)
+        {
+            outputLED(2);
+        }
+        else if(eventSeq[1] == MK3 && eventSeq[2] == MK2)
+        {
+            outputLED(0);
+        }
+        else
+        {
+            outputError();
+        }
+    }
+    else if(eventSeq[0] == MK2)
+    {
+        outputLED(3);
+    }
+    else if(eventSeq[0] == MK3)
+    {
+        outputLED(6);
+    }
+    else
+    {
+        outputError();
+    }
+}
+
+void recordEvent(int MK)
+{
+    switch(eventNum)
+    {
+        case 0:
+            eventSeq[0] = MK;
+            eventNum++;
+            break;
+        case 1:
+            eventSeq[1] = MK;
+            eventNum++;
+            break;
+        case 2:
+            eventSeq[2] = MK;
+            calculateLED();
+            refreshRecord();
+            break;
+        default:
+            refreshRecord();
+            break;
+    }
 }
 
 void __ISR(_COMPARATOR_3_VECTOR, ipl7) _MK1RecievedSound(void)
 {
-    led_set(0, ON);
-    led_set(1, ON);
-    int i;
-    for (i = 0; i < 5000000; i ++);
-    led_set(0, OFF);
-    led_set(1, OFF);
+    recordEvent(MK1);
+    mCMP3IntEnable(0);
     mCMP3ClearIntFlag();
-    mCMP2ClearIntFlag();
-    mCMP1ClearIntFlag();
 }
 
 void __ISR(_COMPARATOR_2_VECTOR, ipl7) _MK2RecievedSound(void)
 {
-    led_set(3, ON);
-    int i;
-    for (i = 0; i < 5000000; i ++);
-    led_set(3, OFF);
+    recordEvent(MK2);
+    mCMP2IntEnable(0);
     mCMP2ClearIntFlag();
-    mCMP1ClearIntFlag();
-    mCMP3ClearIntFlag();
 }
 
 void __ISR(_COMPARATOR_1_VECTOR, ipl7) _MK3RecievedSound(void)
 {
-    led_set(6, ON);
-    int i;
-    for (i = 0; i < 5000000; i ++);
-    led_set(6, OFF);
+    recordEvent(MK3);
+    mCMP1IntEnable(0);
     mCMP1ClearIntFlag();
-    mCMP2ClearIntFlag();
-    mCMP3ClearIntFlag();
 }

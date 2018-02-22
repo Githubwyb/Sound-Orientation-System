@@ -13,6 +13,13 @@
 
 #define CMP3ConfigInt(config)  ( mCMP3ClearIntFlag(), mCMP3SetIntPriority((config)&7), mCMP3SetIntSubPriority(((config) >> 4)&3), mCMP3IntEnable((config) >> 15) )
 
+#define CMP3Close()  (CM3CONCLR = CMP_ENABLE, mCMP3IntEnable(0))
+
+#define MK_NONE 0
+#define MK1 1
+#define MK2 2
+#define MK3 3
+
 void cmp_init();
 
 #endif /* __CMP_EXTRA_H */
