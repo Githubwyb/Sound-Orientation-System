@@ -110,21 +110,21 @@ void recordEvent(int MK)
 
 void __ISR(_COMPARATOR_3_VECTOR, ipl7) _MK1RecievedSound(void)
 {
-    recordEvent(MK1);
     mCMP3IntEnable(0);
+    recordEvent(MK1);
     mCMP3ClearIntFlag();
 }
 
 void __ISR(_COMPARATOR_2_VECTOR, ipl7) _MK2RecievedSound(void)
 {
-    recordEvent(MK2);
     mCMP2IntEnable(0);
+    recordEvent(MK2);
     mCMP2ClearIntFlag();
 }
 
 void __ISR(_COMPARATOR_1_VECTOR, ipl7) _MK3RecievedSound(void)
 {
-    recordEvent(MK3);
     mCMP1IntEnable(0);
+    recordEvent(MK3);
     mCMP1ClearIntFlag();
 }
