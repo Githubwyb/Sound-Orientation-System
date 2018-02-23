@@ -163,7 +163,7 @@ void uart1_sendData( uint8_t *data, uint16_t length )
     }
 }
 
-void __ISR( _UART_1_VECTOR, ipl2 ) _UART1_INT_handle( void )
+void __ISR( _UART_1_VECTOR, ipl1 ) _UART1_INT_handle( void )
 {
     
 	if( INTGetFlag( INT_SOURCE_UART_RX( UART1 ) ) )

@@ -39,6 +39,8 @@
 #pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
 /************************************************************************************************************/
 
+ST_SETTING setting = {0};
+
 void main(void) {
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);  
 
