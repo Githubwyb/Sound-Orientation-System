@@ -48,5 +48,8 @@ Code for Embedded System Design Course. Written by XC Group, Seedclass 2015. Cod
 4. 分支/feature/adc_design是由郭维护的，大意是和ADC有关的一些设计。具体功能实现我不清楚。
 
 
-## 5. 总结
-目前想到的就这些，大家一起努力吧~
+## tips
+* 代码编码格式为UTF-8
+* 仿真时，晶振的振荡频率是22.1184MHz
+* 我不熟悉MPLAB的工程要上传哪些文件到git，可能有必要重新设置工程才能正常编译orz
+* 设置工程时注意给PIC32的供电状态
