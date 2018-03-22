@@ -6,20 +6,21 @@
 #include "timer1.h"
 #include "led.h"
 #include "log.h"
+#include "data.h"
 
 #define SYS_FREQ F_SYS_CLK
-//11.0592MHz = 115200*96
 /*
 *   sys config
-*   fSYS    = 22.1184/FPLLIDIV*FPLLMUL/FPLLODIV = 44.236800MHz
-*   fPBCK   = fSYS/FPBDIV = 11.0592MHz
+*   fSYS    = 16.00MHz/FPLLIDIV*FPLLMUL/FPLLODIV = 64MHz
+*   fPBCK   = fSYS/FPBDIV = 16MHz
 */
+
 /************************************************************************************************************/
 #pragma config ICESEL = ICS_PGx3        // ICE/ICD Comm Channel Select (Communicate on PGEC3/PGED3)
 #pragma config JTAGEN = OFF             // JTAG Enable (JTAG Disabled)
 
 // DEVCFG2
-#pragma config FPLLIDIV = DIV_12         // PLL Input Divider (2x Divider)
+#pragma config FPLLIDIV = DIV_6         // PLL Input Divider (2x Divider)
 #pragma config FPLLMUL = MUL_24         // PLL Multiplier (16x Multiplier)
 #pragma config UPLLIDIV = DIV_12        // USB PLL Input Divider (12x Divider)
 #pragma config UPLLEN = OFF             // USB PLL Enable (Disabled and Bypassed)
@@ -39,7 +40,19 @@
 #pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
 /************************************************************************************************************/
 
-ST_SETTING setting = {0};
+void testHandler(void)
+{
+    int i=0;
+    INTEnable( INT_AD1, INT_DISABLED );
+    LOG_DEBUG("max data is %d, cnt %d", data.valueTemp, data.cntTemp);
+    for(;i<15;i++)
+    {
+        LOG_DEBUG("buff%d = %d",i,data.temp2[i]);
+    }
+    INTEnable( INT_AD1, INT_ENABLED );
+    data.cntTemp = 0;
+    data.valueTemp = 0;
+}
 
 void main(void) {
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);  
@@ -52,10 +65,16 @@ void main(void) {
     TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     
     led_init();
+    led_write(0xff);
+    
     led_state_init();
     uart1_init();
     adc2_init();
     
+
+    
+    TIMER_RequestTick(testHandler, 500);
+    TIMER_Start(testHandler);
     //print("hello world~\r\n");
     LOG_DEBUG("hello world");
     

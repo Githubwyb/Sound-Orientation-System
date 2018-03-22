@@ -5,8 +5,8 @@
 #define u16 unsigned short
 #define u32 unsigned int
 
-#define F_SYS_CLK 44236800
-#define F_PB_CLK  11059200
+#define F_SYS_CLK (64000000)
+#define F_PB_CLK  (16000000)
 
 #define bittest(var, bit) ((var) & (1 <<(bit)))
 #define bitset(var, bit) ((var) |= (1 << (bit)))
@@ -14,7 +14,7 @@
 
 #define MAX(a,b) (a>b ? a:b)
 #define MIN(a,b) (a>b ? b:a)
-
+/*
 typedef enum
 {
     STATE_IDLE = 0,
@@ -27,12 +27,13 @@ typedef enum
     
 }ENUM_MAIN_STATE;
 
+
 typedef struct
 {
     ENUM_MAIN_STATE state;
     
 }ST_SETTING;
-
+*/
 unsigned char* string_trimLeft(const unsigned char* string);
 
 #endif 

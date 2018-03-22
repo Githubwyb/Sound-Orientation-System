@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d ${OBJECTDIR}/uart1.o.d ${OBJECTDIR}/adcInst.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/protocol.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d ${OBJECTDIR}/uart1.o.d ${OBJECTDIR}/adcInst.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/protocol.o.d ${OBJECTDIR}/data.o.d ${OBJECTDIR}/process.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o
 
 # Source Files
-SOURCEFILES=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c
+SOURCEFILES=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c
 
 
 CFLAGS=
@@ -148,6 +148,18 @@ ${OBJECTDIR}/protocol.o: protocol.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/protocol.o 
 	@${FIXDEPS} "${OBJECTDIR}/protocol.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/protocol.o.d" -o ${OBJECTDIR}/protocol.o protocol.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/data.o: data.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/data.o.d 
+	@${RM} ${OBJECTDIR}/data.o 
+	@${FIXDEPS} "${OBJECTDIR}/data.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/data.o.d" -o ${OBJECTDIR}/data.o data.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/process.o: process.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/process.o.d 
+	@${RM} ${OBJECTDIR}/process.o 
+	@${FIXDEPS} "${OBJECTDIR}/process.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/process.o.d" -o ${OBJECTDIR}/process.o process.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -196,6 +208,18 @@ ${OBJECTDIR}/protocol.o: protocol.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/protocol.o.d 
 	@${RM} ${OBJECTDIR}/protocol.o 
 	@${FIXDEPS} "${OBJECTDIR}/protocol.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/protocol.o.d" -o ${OBJECTDIR}/protocol.o protocol.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/data.o: data.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/data.o.d 
+	@${RM} ${OBJECTDIR}/data.o 
+	@${FIXDEPS} "${OBJECTDIR}/data.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/data.o.d" -o ${OBJECTDIR}/data.o data.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/process.o: process.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/process.o.d 
+	@${RM} ${OBJECTDIR}/process.o 
+	@${FIXDEPS} "${OBJECTDIR}/process.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/process.o.d" -o ${OBJECTDIR}/process.o process.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

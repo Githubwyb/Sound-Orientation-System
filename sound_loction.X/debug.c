@@ -41,7 +41,6 @@ static CMD_MAP cmd_map[MAX_CMD_NUMBER] =
 int debug_proc(const unsigned char* cmdString, unsigned short length)
 {
     int i = 0;
-
     const unsigned char* cmd = string_trimLeft(cmdString);
 
     for (i = 0; i < MAX_CMD_NUMBER && cmd_map[i].action; i++)
@@ -53,6 +52,5 @@ int debug_proc(const unsigned char* cmdString, unsigned short length)
     }
 
     LOG_INFO("CMD not processed");
-
     return -1;
 }

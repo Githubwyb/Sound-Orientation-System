@@ -9,6 +9,8 @@
       <itemPath>protocol.h</itemPath>
       <itemPath>debug.h</itemPath>
       <itemPath>adcInst.h</itemPath>
+      <itemPath>data.h</itemPath>
+      <itemPath>process.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
@@ -19,6 +21,8 @@
       <itemPath>adcInst.c</itemPath>
       <itemPath>debug.c</itemPath>
       <itemPath>protocol.c</itemPath>
+      <itemPath>data.c</itemPath>
+      <itemPath>process.c</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>
