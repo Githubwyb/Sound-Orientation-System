@@ -56,7 +56,8 @@ void testHandler(void)
     data.valueTemp = 0;
 }
 
-void main(void) {
+void main(void) 
+{
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
@@ -69,20 +70,15 @@ void main(void) {
     
     led_state_init();
     uart1_init();
-    adc2_init();
+    //adc2_init();
     //cmp_init();
     
     TIMER_RequestTick(testHandler, 1000);
     TIMER_Start(testHandler);
     LOG_DEBUG("hello world");
 
-    while(1)
-    {
-        
-        
-    }
     //主流程
-    //process_run();
+    process_run();
 
     CMP2Close();
     CVREFClose();

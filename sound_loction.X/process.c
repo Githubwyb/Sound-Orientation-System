@@ -87,6 +87,118 @@ void process_reConfig(void)
 }
 
 #define PI (3.1415926535897932384626433832795)
+
+typedef enum
+{
+    CACULATE_012,
+    CACULATE_021,
+    CACULATE_102,
+    CACULATE_120,
+    CACULATE_201,
+    CACULATE_210,
+} PROCESS_CACULATE_CASE_ENUM;
+
+static float angle_k = 1;
+
+int process_getLedId(void)
+{
+    u8 processCase = 0;
+    u32 max = 0;
+    u32 min = 0;
+    int i = 0;
+    float angle_relate = 0;
+    float angle_led = 0;
+    u32 record[3] = {0};
+    
+    for(i = 0; i < 3; i++)
+    {
+        int j =0;
+        for(; j<3; j++)
+        {
+            if(data.record[j].mk == i)
+            {
+                record[i] = data.record[j].cntT;
+            }
+        }
+    }
+    
+    if(record[0] <= record[1])
+    {
+        if(record[1] <= record[2])
+        {
+            processCase = CACULATE_012;
+            max = record[2];
+            min = record[0];
+        }
+        else if(record[0] <= record[2])
+        {
+            processCase = CACULATE_021;
+            max = record[1];
+            min = record[0];
+        }
+        else
+        {
+            processCase = CACULATE_201;
+            max = record[1];
+            min = record[2];
+        }
+    }
+    else
+    {
+        if(record[0] <= record[2])
+        {
+            processCase = CACULATE_102;
+            max = record[2];
+            min = record[1];
+        }
+        else if(record[1] <= record[2])
+        {
+            processCase = CACULATE_120;
+            max = record[0];
+            min = record[1];
+        }
+        else
+        {
+            processCase = CACULATE_210;
+            max = record[0];
+            min = record[2];
+        }
+    }
+
+    angle_relate = acos((max - min) * 0.1 / LIGHT_DISTANSE) * angle_k;
+
+    switch(processCase)
+    {
+        case CACULATE_012:
+            angle_led = 112.5 - angle_relate / PI * 180;
+            break;
+
+        case CACULATE_021:
+            angle_led = 112.5 + angle_relate / PI * 180;
+            break;
+
+        case CACULATE_102:
+            angle_led = 52.5 + angle_relate / PI * 180;
+            break;
+
+        case CACULATE_120:
+            angle_led = 52.5 - angle_relate / PI * 180;
+            break;
+
+        case CACULATE_201:
+            angle_led = -7.5 - angle_relate / PI * 180;
+            break;
+
+        case CACULATE_210:
+            angle_led = 7.5 + angle_relate / PI * 180;
+            break;
+    }
+    data.degree = ((u16)(angle_led + 360))%360;
+    return 1;
+}
+
+
+
 #define FACTOR_T (1.0/16000000.0) //时间系数(周期)
 #define FACTOR_LENGTH (FACTOR_T/340.0*1000.0) //距离系数 distance(mm) = cnt * FACTOR_LENGTH
 
@@ -100,6 +212,8 @@ void process_reConfig(void)
 #define DEGREE_SHIFT DEGRE2PI(22.5) //degree_mk1
 #define DEGREE_CHANGE0(x) DEGRE2PI(x-22.5) //弧度值
 #define DEGREE_CHANGE1(x) DEGRE2PI(x+115)
+
+
 
 //#define PI (3.14159265358979323846)
 bool process_dealData(void)
@@ -187,7 +301,7 @@ void process_run(void)
             case STATE_OVER:
                 LOG_DEBUG("STATE: STATE_OVER");
                 //处理数据
-                if(false == process_dealData())
+                if(false == process_getLedId())
                 {
                     LOG_DEBUG("deal data error");
                     data.processState = STATE_IDLE;
