@@ -8,7 +8,7 @@
 
 #define CLEAR_TIMER2() {TMR2 = 0;}
 #define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_EXT | T2_PS_1_1, 65535)
-#define CLOSE_TIMER2() CloseTimer2()
+#define CLOSE_TIMER2() CloseTimer2() 
 #define GET_TIMER2_CNT()  (TMR2)
 #define SET_TIMER2_CNT(value) TMR2 = (value)
 
@@ -21,7 +21,7 @@ void __ISR(_TIMER_2_VECTOR, ipl2) _Timer2Handler(void)
 {
     //time out 
     CLOSE_TIMER2();
-    data.processState = STATE_ERROR;
+    data.processState = STATE_TIMEOUT;
     LOG_DEBUG("time out!");
     INTClearFlag(INT_T1);//中断标志清零
 }
@@ -49,6 +49,7 @@ void TICK_PAUSE(ENUM_MK mk)
             data.processState = STATE_WAIT_THIRD_PULSE;
             break;
         case STATE_WAIT_THIRD_PULSE:
+            CLOSE_TIMER2();//停止了timer 只是关掉了中断
             data.record[2].mk = mk;
             data.record[2].cntT = GET_TIMER2_CNT();
             data.processState = STATE_OVER;
@@ -73,9 +74,11 @@ static uint8_t process_getLedNum_byDegree(uint16_t degree)
 void process_clear(void)
 {
     data.processState = STATE_IDLE;
+
     CLEAR_TIMER2();
-    //TODO:使能MK中断
+    ENABLE_MK();
 }
+
 
 //调节阈值、状态灯等
 void process_reConfig(void)
@@ -178,9 +181,11 @@ void process_run(void)
             case STATE_IDLE:
                 //清除标志位 开始任务
                 data.processState = STATE_WAIT_FIRST_PULSE;
+                LOG_DEBUG("STATE: STATE_IDLE");
                 process_clear();
                 break;
             case STATE_OVER:
+                LOG_DEBUG("STATE: STATE_OVER");
                 //处理数据
                 if(false == process_dealData())
                 {
@@ -196,10 +201,12 @@ void process_run(void)
                 break;
             case STATE_TIMEOUT:
             case STATE_ERROR:
+                LOG_DEBUG("STATE: STATE_ERROR");
                 data.processState = STATE_IDLE;
                 break;
         }    
     }
     while (1);
-
+    
 }
+

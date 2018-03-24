@@ -38,6 +38,7 @@ typedef struct
     ST_PULSE_RECORD record[3];
     ST_PULSE_RECORD cnt[3];
     
+    
     uint16_t degree;//°
     uint32_t distance; //mm
 
