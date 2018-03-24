@@ -61,16 +61,16 @@ void main(void) {
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
-    
+
     /*必须放在前面，因为后面初始化用到timer*/
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    //led_init();
+    led_init();
    // led_write(0xff);
-    
+
 //    led_state_init();
     uart1_init();
     //adc2_init();
-   // cmp_init();
+    cmp_init();
 
     //TIMER_RequestTick(testHandler, 1000);
     //TIMER_Start(testHandler);
