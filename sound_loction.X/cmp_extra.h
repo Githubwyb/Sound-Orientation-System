@@ -4,6 +4,7 @@
 #define CMP3Open(config)  (CM3CON = (config)&0xFFFF, CMSTATCLR = _CMSTAT_SIDL_MASK, CMSTATSET = ((config)>>29))
 
 #define CMP_POS_INPUT_C3IN_POS  (0)
+#define CMP3_NEG_INPUT_C3IN_NEG (0 << _CM1CON_CCH_POSITION)
 #define CMP3_NEG_INPUT_IVREF    (3 << _CM3CON_CCH_POSITION)
 
 #define mCMP3ClearIntFlag()                     (IFS1CLR = _IFS1_CMP3IF_MASK)

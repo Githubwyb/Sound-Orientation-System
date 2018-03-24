@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
-        <file>
-            <url>adcInst.c</url>
-            <bookmark id="1">
-                <name/>
-                <line>28</line>
-                <key/>
-            </bookmark>
-        </file>
-    </editor-bookmarks>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Projects/sounderlocator/git/sound_loction.X/log.c</file>
-            <file>file:/D:/Projects/sounderlocator/git/sound_loction.X/adcInst.c</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/cmp_extra.h</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/main.c</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/led.h</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/log.h</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/cmp_extra.c</file>
+            <file>file:/D:/伍圣晖/文档/嵌入式课设/Sound-Orientation-System/sound_loction.X/led.c</file>
         </group>
     </open-files>
 </project-private>

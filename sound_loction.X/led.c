@@ -50,8 +50,9 @@ void led_write(u8 s)
 /*使用PWM控制ledstate，pwm源为timer3,但并没有占用*/
 void led_state_init(void)
 {   
-    TRISBbits.TRISB14 = 0;
-    PPSOutput(4, RPB14, OC3);
+    TRISBbits.TRISB15 = 0;
+    PORTBbits.RB15 = 1;
+//    PPSOutput(0, RPB15, OC3);
     
     OpenTimer3(T3_ON, 1025);//1025-1 = 1024
     OpenOC3( OC_ON | OC_TIMER_MODE16 | OC_TIMER3_SRC | OC_CONTINUE_PULSE | OC_CONTINUE_PULSE , 1024, 1025);
