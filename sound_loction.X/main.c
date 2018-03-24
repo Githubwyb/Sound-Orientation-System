@@ -42,20 +42,6 @@
 #pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
 /************************************************************************************************************/
 
-void testHandler(void)
-{
-    int i=0;
-    INTEnable( INT_AD1, INT_DISABLED );
-    LOG_DEBUG("max data is %d, cnt %d", data.valueTemp, data.cntTemp);
-    for(;i<15;i++)
-    {
-        LOG_DEBUG("buff%d = %d",i,data.temp2[i]);
-    }
-    INTEnable( INT_AD1, INT_ENABLED );
-    data.cntTemp = 0;
-    data.valueTemp = 0;
-}
-
 void main(void) 
 {
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
@@ -64,19 +50,18 @@ void main(void)
     INTEnableInterrupts();
     
     /*必须放在前面，因为后面初始化用到timer*/
-    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     led_init();
-    led_write(0xff);
+    led_write(0x00);
     
     led_state_init();
     uart1_init();
     //adc2_init();
-    //cmp_init();
-    
-    TIMER_RequestTick(testHandler, 1000);
-    TIMER_Start(testHandler);
+    cmp_init();
+   
     LOG_DEBUG("hello world");
-
+    
+    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
     //主流程
     process_run();
 

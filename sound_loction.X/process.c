@@ -7,23 +7,23 @@
 #include "cmp_extra.h"
 
 #define CLEAR_TIMER2() {TMR2 = 0;}
-#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_EXT | T2_PS_1_1, 65535)
+#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_EXT | T2_PS_1_1, 50000)
 #define CLOSE_TIMER2() CloseTimer2() 
 #define GET_TIMER2_CNT()  (TMR2)
 #define SET_TIMER2_CNT(value) TMR2 = (value)
 
 void config_count_timer()
 {
+    
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
 }
 
-void __ISR(_TIMER_2_VECTOR, ipl2) _Timer2Handler(void)
+
+void __ISR(_TIMER_2_VECTOR, ipl6) _Timer2Handler(void)
 {
-    //time out 
     CLOSE_TIMER2();
     data.processState = STATE_TIMEOUT;
-    LOG_DEBUG("time out!");
-    INTClearFlag(INT_T1);//中断标志清零
+    INTClearFlag(INT_T2);//中断标志清零
 }
 
 
@@ -38,21 +38,24 @@ void TICK_PAUSE(ENUM_MK mk)
     switch(data.processState)
     {
         case STATE_WAIT_FIRST_PULSE:
-            OPEN_TIMER2();
+            //OPEN_TIMER2();
             data.record[0].mk = mk;
             data.record[0].cntT = 0;
             data.processState = STATE_WAIT_SECOND_PULSE;
+            OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000);
+            //TMR2 = 0;
             break;
         case STATE_WAIT_SECOND_PULSE:
-            data.record[1].mk = mk;
             data.record[1].cntT = GET_TIMER2_CNT();
+            data.record[1].mk = mk;
             data.processState = STATE_WAIT_THIRD_PULSE;
             break;
         case STATE_WAIT_THIRD_PULSE:
-            CLOSE_TIMER2();//停止了timer 只是关掉了中断
-            data.record[2].mk = mk;
+            //CLOSE_TIMER2();//停止了timer 只是关掉了中断
             data.record[2].cntT = GET_TIMER2_CNT();
+            data.record[2].mk = mk;
             data.processState = STATE_OVER;
+            CLOSE_TIMER2();
             break;
         default:
             // 在STATE_OVER状态等待监测处理
@@ -65,18 +68,20 @@ static uint8_t process_getLedNum_byDegree(uint16_t degree)
     uint8_t led = 0;
     if( (int)((float)(degree)/45.0 + 0.5) > 7 )
     {
-        led  =  0;
+        return 0;
     }
-    return led;
+    return (int)((float)(degree)/45.0 + 0.5);
 }
 
 /*清除标记，使能MK中断，禁止timer中断*/
 void process_clear(void)
 {
-    data.processState = STATE_IDLE;
-
-    CLEAR_TIMER2();
+    //data.processState = STATE_IDLE;
+    //CLEAR_TIMER2();
     ENABLE_MK();
+    mCMP1ClearIntFlag();
+    mCMP2ClearIntFlag();
+    mCMP3ClearIntFlag();
 }
 
 
@@ -100,6 +105,7 @@ typedef enum
 
 static float angle_k = 1;
 
+#define LIGHT_DISTANSE 1500
 int process_getLedId(void)
 {
     u8 processCase = 0;
@@ -121,47 +127,39 @@ int process_getLedId(void)
             }
         }
     }
-    
-    if(record[0] <= record[1])
+    max = data.record[2].cntT;
+    min = data.record[0].cntT;
+    if(data.record[0].mk == 0)
     {
-        if(record[1] <= record[2])
+        if(data.record[1].mk == 1)
         {
             processCase = CACULATE_012;
-            max = record[2];
-            min = record[0];
-        }
-        else if(record[0] <= record[2])
-        {
-            processCase = CACULATE_021;
-            max = record[1];
-            min = record[0];
         }
         else
         {
-            processCase = CACULATE_201;
-            max = record[1];
-            min = record[2];
+            processCase = CACULATE_021;
+        }
+    }
+    else if(data.record[0].mk == 1)
+    {
+        if(data.record[1].mk == 0)
+        {
+            processCase = CACULATE_102;
+        }
+        else
+        {
+            processCase = CACULATE_120;
         }
     }
     else
     {
-        if(record[0] <= record[2])
+        if(data.record[1].mk == 0)
         {
-            processCase = CACULATE_102;
-            max = record[2];
-            min = record[1];
-        }
-        else if(record[1] <= record[2])
-        {
-            processCase = CACULATE_120;
-            max = record[0];
-            min = record[1];
+            processCase = CACULATE_201;
         }
         else
         {
             processCase = CACULATE_210;
-            max = record[0];
-            min = record[2];
         }
     }
 
@@ -174,7 +172,7 @@ int process_getLedId(void)
             break;
 
         case CACULATE_021:
-            angle_led = 112.5 + angle_relate / PI * 180;
+            angle_led = -62.5 + angle_relate / PI * 180;
             break;
 
         case CACULATE_102:
@@ -182,7 +180,7 @@ int process_getLedId(void)
             break;
 
         case CACULATE_120:
-            angle_led = 52.5 - angle_relate / PI * 180;
+            angle_led = -127.5 - angle_relate / PI * 180;
             break;
 
         case CACULATE_201:
@@ -190,7 +188,7 @@ int process_getLedId(void)
             break;
 
         case CACULATE_210:
-            angle_led = 7.5 + angle_relate / PI * 180;
+            angle_led = 172.5 + angle_relate / PI * 180;
             break;
     }
     data.degree = ((u16)(angle_led + 360))%360;
@@ -212,8 +210,6 @@ int process_getLedId(void)
 #define DEGREE_SHIFT DEGRE2PI(22.5) //degree_mk1
 #define DEGREE_CHANGE0(x) DEGRE2PI(x-22.5) //弧度值
 #define DEGREE_CHANGE1(x) DEGRE2PI(x+115)
-
-
 
 //#define PI (3.14159265358979323846)
 bool process_dealData(void)
@@ -277,6 +273,7 @@ bool process_dealData(void)
 
 void process_resultOut(void)
 {
+    led_write(0x00);
     led_set(process_getLedNum_byDegree(data.degree), ON);
     LOG_DEBUG("result, mk:%d %d %d, record:%d %d %d, degree:%d, led:%d",
                         data.record[0].mk+1, data.record[1].mk+1, data.record[2].mk+1,
@@ -286,8 +283,13 @@ void process_resultOut(void)
 
 /*在检测过程中 除了time2中断表示超时，不准其它中断！*/
 /*监测tick拥有最高优先级*/
+
+#include "cmp_extra.h"
+
 void process_run(void)
 {
+    static unsigned int j = 0;
+    ENABLE_MK();
     do
     {
         switch(data.processState)
@@ -295,10 +297,15 @@ void process_run(void)
             case STATE_IDLE:
                 //清除标志位 开始任务
                 data.processState = STATE_WAIT_FIRST_PULSE;
-                LOG_DEBUG("STATE: STATE_IDLE");
+                //LOG_DEBUG("STATE: STATE_IDLE");
                 process_clear();
                 break;
             case STATE_OVER:
+                /*
+                mCMP3IntEnable(0);
+                mCMP3IntEnable(0);
+                mCMP3IntEnable(0);
+                */
                 LOG_DEBUG("STATE: STATE_OVER");
                 //处理数据
                 if(false == process_getLedId())
@@ -312,15 +319,20 @@ void process_run(void)
                 //输出
                 process_resultOut();     
                 data.processState = STATE_IDLE;
+                
+                j = 6553500;
+                while(--j)
+                {
+                    ;
+                }
                 break;
+                
             case STATE_TIMEOUT:
-            case STATE_ERROR:
                 LOG_DEBUG("STATE: STATE_ERROR");
                 data.processState = STATE_IDLE;
                 break;
         }    
-    }
-    while (1);
+    }while (1);
     
 }
 

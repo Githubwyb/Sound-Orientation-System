@@ -24,7 +24,6 @@ typedef enum
     STATE_WAIT_THIRD_PULSE, 
     STATE_OVER,
     STATE_TIMEOUT,
-    STATE_ERROR,
 }ENUM_PROCESS_STATE;
 
 typedef struct

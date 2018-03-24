@@ -239,6 +239,8 @@ bool TIMER_SetConfiguration ( TIMER_CONFIGURATIONS configuration )
   Remarks:
     None
   ***************************************************************************/
+
+
 void __ISR(_TIMER_1_VECTOR, ipl2) _Timer1Handler(void)
 {
     //DisableIntT1;
