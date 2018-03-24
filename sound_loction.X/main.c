@@ -56,32 +56,31 @@ void testHandler(void)
     data.valueTemp = 0;
 }
 
-void main(void) {
+void main(void) 
+{
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
-
+    
     /*必须放在前面，因为后面初始化用到timer*/
-    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     led_init();
-   // led_write(0xff);
-
-//    led_state_init();
+    led_write(0xff);
+    
+    led_state_init();
     uart1_init();
     //adc2_init();
-    cmp_init();
+    //cmp_init();
+    
+    TIMER_RequestTick(testHandler, 1000);
+    TIMER_Start(testHandler);
+    LOG_DEBUG("hello world");
 
-    //TIMER_RequestTick(testHandler, 1000);
-    //TIMER_Start(testHandler);
-    LOG_DEBUG("hello world\r\n");
-
-    while(1)
-    {
-        
-    }
     //主流程
-    //process_run();
+    process_run();
 
+    CMP2Close();
+    CVREFClose();
     return;
 }
