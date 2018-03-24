@@ -128,7 +128,7 @@ void uart1_RX_interrupt_proc( void )
     INTClearFlag( INT_SOURCE_UART_RX( UART1 ) );
 }
 
-void uart1_sendData( uint8_t *data, uint16_t length )
+void uart1_sendData( const uint8_t *data, uint16_t length )
 {
     if ( length == 0 || length > UART1_BUFFER_LEN )
     {
@@ -175,4 +175,3 @@ void __ISR( _UART_1_VECTOR, ipl1 ) _UART1_INT_handle( void )
         uart1_TX_interrupt_proc();
 	}
 }
-

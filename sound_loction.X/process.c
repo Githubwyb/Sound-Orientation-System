@@ -4,22 +4,17 @@
 #include <math.h>
 #include <stdbool.h>
 #include "process.h"
+#include "cmp_extra.h"
 
-#define CLEAR_TIMER2 TMR2 = 0
-#define OPEN_TIMER2 OpenTimer2(TIMER_ON | T2_SOURCE_EXT | T2_PS_1_1, 65535)
+#define CLEAR_TIMER2() {TMR2 = 0;}
+#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_EXT | T2_PS_1_1, 65535)
 #define CLOSE_TIMER2() CloseTimer2()
-#define GET_TIMER2_CNT  (TMR2)
+#define GET_TIMER2_CNT()  (TMR2)
 #define SET_TIMER2_CNT(value) TMR2 = (value)
-
-#define DISABLE_MK0() //清除MK1中断标记并禁止
-#define DISABLE_MK1()
-#define DISABLE_MK2()
-#define DISABLE_MK() 
 
 void config_count_timer()
 {
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
-
 }
 
 void __ISR(_TIMER_2_VECTOR, ipl2) _Timer2Handler(void)
@@ -34,7 +29,12 @@ void __ISR(_TIMER_2_VECTOR, ipl2) _Timer2Handler(void)
 
 void TICK_PAUSE(ENUM_MK mk)
 {
-    DISABLE_MK(mk);
+    switch(mk)
+    {
+        case MK0: {DISABLE_MK0();break;}
+        case MK1: {DISABLE_MK1();break;}    
+        case MK2: {DISABLE_MK2();break;}
+    }
     switch(data.processState)
     {
         case STATE_WAIT_FIRST_PULSE:
@@ -83,22 +83,22 @@ void process_reConfig(void)
     
 }
 
-
-#define FACTOR_T () //时间系数(周期)
+#define PI (3.1415926535897932384626433832795)
+#define FACTOR_T (1.0/16000000.0) //时间系数(周期)
 #define FACTOR_LENGTH (FACTOR_T/340.0*1000.0) //距离系数 distance(mm) = cnt * FACTOR_LENGTH
 
-#define BOARD_X0_CNT (/FACTOR_LENGTH)
-#define BOARD_Y0_CNT (/FACTOR_LENGTH)
-#define BOARD_X1_CNT (/FACTOR_LENGTH)
-#define BOARD_Y1_CNT (/FACTOR_LENGTH)
-#define BOARD_MK_DISTANCE_CNT (78.0/FACTOR_LENGTH)
+#define BOARD_X0_CNT (2.9368393249511608098391401276485/FACTOR_LENGTH)
+#define BOARD_Y0_CNT (22.307509380910734250752544355893/FACTOR_LENGTH)
+#define BOARD_X1_CNT (-20.787289481503952012884121761428/FACTOR_LENGTH)
+#define BOARD_Y1_CNT (-8.610377228214519863890349640684/FACTOR_LENGTH)
+#define BOARD_MK_DISTANCE_CNT (77.942286340599478208735085367764/FACTOR_LENGTH)
 
+#define DEGRE2PI(x) ((x)*180.0/PI)
+#define DEGREE_SHIFT DEGRE2PI(22.5) //degree_mk1
+#define DEGREE_CHANGE0(x) DEGRE2PI(x-22.5) //弧度值
+#define DEGREE_CHANGE1(x) DEGRE2PI(x+115)
 
-#define DEGREE_SHIFT (22.5) //degree_mk1
-#define DEGREE_CHANGE0(x) () //弧度值
-#define DEGREE_CHANGE1(x) ()
-
-#define PI (3.14159265358979323846)
+//#define PI (3.14159265358979323846)
 bool process_dealData(void)
 {
     int i = 0;
@@ -149,7 +149,7 @@ bool process_dealData(void)
     k2 = tan(ct2);
 
     x = ((BOARD_Y1_CNT - BOARD_Y0_CNT) - (ct2*BOARD_X1_CNT - ct1*BOARD_X0_CNT))/(ct1 - ct2);
-    y = BOARD_Y1_CNT + ct2(x - BOARD_X0_CNT);
+    y = BOARD_Y1_CNT + ct2*(x - BOARD_X0_CNT);
 
     //out
     data.degree = ((int)(atan2(y, x)*180.0/PI) + 360) % 360;

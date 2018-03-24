@@ -9,5 +9,5 @@ unsigned char* string_trimLeft(const unsigned char* string)
 
     while(*p == ' ') p++;
 
-    return p;
+    return (unsigned char*)p;
 }

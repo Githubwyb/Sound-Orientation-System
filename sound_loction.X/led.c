@@ -3,7 +3,7 @@
 #include <plib.h>
 
 void led_init(void)
-{    
+{
     TRISBbits.TRISB9  = 0;
     TRISBbits.TRISB10 = 0;
     TRISBbits.TRISB11 = 0;
@@ -45,6 +45,7 @@ void led_write(u8 s)
     LEDbits.D6 = (bool)(s & (0x01 <<6));   
     LEDbits.D7 = (bool)(s & (0x01 <<7));
 }
+
 
 /*使用PWM控制ledstate，pwm源为timer3,但并没有占用*/
 void led_state_init(void)

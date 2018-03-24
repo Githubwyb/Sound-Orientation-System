@@ -36,4 +36,4 @@ typedef struct
 */
 unsigned char* string_trimLeft(const unsigned char* string);
 
-#endif 
+#endif

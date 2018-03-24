@@ -7,6 +7,7 @@
 #include "led.h"
 #include "log.h"
 #include "data.h"
+#include "cmp_extra.h"
 
 #define SYS_FREQ F_SYS_CLK
 /*
@@ -55,7 +56,8 @@ void testHandler(void)
 }
 
 void main(void) {
-    SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);  
+    SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
+    LOG_DEBUG("hello world");
 
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
@@ -63,8 +65,9 @@ void main(void) {
 
     /*必须放在前面，因为后面初始化用到timer*/
     TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    
+
     led_init();
+
     led_write(0xff);
     
     led_state_init();
@@ -78,10 +81,17 @@ void main(void) {
     //print("hello world~\r\n");
     LOG_DEBUG("hello world");
     
+
+    //UART1Config();
+    cmp_init();
+
+
     while(1)
     {
 
     }
-     
+
+    CMP2Close();
+    CVREFClose();
     return;
 }
