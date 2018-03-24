@@ -58,7 +58,7 @@
 #define TIMER_INTERRUPT_PRIORITY    0x0001
 #define TIMER_INTERRUPT_PRIORITY_4  0x0004
 
-#define TIMER_INT_PRIOR             T1_INT_PRIOR_3
+#define TIMER_INT_PRIOR             T1_INT_PRIOR_6
 #define TIMER_INT_SUB_PRIOR         T1_INT_SUB_PRIOR_1
 /* Type Definitions ************************************************/
 typedef struct

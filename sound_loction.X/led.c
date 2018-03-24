@@ -65,3 +65,7 @@ void led_state_setLevel(u16 level)
     SetDCOC3PWM(level);
 }
 
+void led_set_degree(uint16_t degree)
+{
+
+}
