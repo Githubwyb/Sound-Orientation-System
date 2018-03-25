@@ -52,20 +52,67 @@ void main(void)
     /*必须放在前面，因为后面初始化用到timer*/
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     led_init();
-    led_write(0x00);
+    led_write(0xff);
     
-    led_state_init();
-    uart1_init();
+    //led_state_init();
+    //uart1_init();
     //adc2_init();
-    cmp_init();
+    //cmp_init();
    
-    LOG_DEBUG("hello world");
+    //LOG_DEBUG("hello world");
     
-    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
+    //ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
+    //OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000);
     //主流程
-    process_run();
+    
+    /*
+    ANSELBbits.ANSB15 = 0;
+    ANSELBbits.ANSB1 = 0;
+    ANSELBbits.ANSB3 = 0;
+    
+    TRISBbits.TRISB15 = 1;
+    TRISBbits.TRISB1 = 1;
+    TRISBbits.TRISB3 = 1;
+    
+    CNENBbits.CNIEB15 = 1;
+    CNENBbits.CNIEB1 = 1;
+    CNENBbits.CNIEB3 = 1;
+    
+    CNCONBbits.ON = 1;
+    CNCONBbits.SIDL =0;
+
+    INTSetVectorPriority( INT_CHANGE_NOTICE_VECTOR, INT_PRIORITY_LEVEL_6 );
+    INTSetVectorSubPriority( INT_CHANGE_NOTICE_VECTOR, INT_SUB_PRIORITY_LEVEL_0 );   
+    
+    PORTRead(IOPORT_B);
+    INTClearFlag(INT_CNB);
+    */
+    
+    //INTEnable( INT_CNB, INT_ENABLED );
+    
+    while(1);
+    
+    //process_run();
 
     CMP2Close();
     CVREFClose();
     return;
 }
+void __ISR(_CHANGE_NOTICE_VECTOR, ipl6) _ChangeNoticeHandler(void)
+{
+    if( CNSTATBbits.CNSTATB15 )
+    {
+        led_set(0,1);
+    }
+    if( CNSTATBbits.CNSTATB1)
+    {
+        led_set(3,1);
+    }
+    if( CNSTATBbits.CNSTATB3 )
+    {
+        led_set(2,1);
+    }
+    
+    INTClearFlag(INT_CNB);
+}
+

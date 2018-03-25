@@ -18,14 +18,14 @@ void config_count_timer()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
 }
 
-
+/*
 void __ISR(_TIMER_2_VECTOR, ipl6) _Timer2Handler(void)
 {
     CLOSE_TIMER2();
     data.processState = STATE_TIMEOUT;
     INTClearFlag(INT_T2);//中断标志清零
 }
-
+*/
 
 void TICK_PAUSE(ENUM_MK mk)
 {
@@ -39,11 +39,10 @@ void TICK_PAUSE(ENUM_MK mk)
     {
         case STATE_WAIT_FIRST_PULSE:
             //OPEN_TIMER2();
+            TMR2 = 0;
             data.record[0].mk = mk;
             data.record[0].cntT = 0;
             data.processState = STATE_WAIT_SECOND_PULSE;
-            OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000);
-            //TMR2 = 0;
             break;
         case STATE_WAIT_SECOND_PULSE:
             data.record[1].cntT = GET_TIMER2_CNT();
@@ -55,7 +54,7 @@ void TICK_PAUSE(ENUM_MK mk)
             data.record[2].cntT = GET_TIMER2_CNT();
             data.record[2].mk = mk;
             data.processState = STATE_OVER;
-            CLOSE_TIMER2();
+            //CLOSE_TIMER2();
             break;
         default:
             // 在STATE_OVER状态等待监测处理
@@ -79,9 +78,7 @@ void process_clear(void)
     //data.processState = STATE_IDLE;
     //CLEAR_TIMER2();
     ENABLE_MK();
-    mCMP1ClearIntFlag();
-    mCMP2ClearIntFlag();
-    mCMP3ClearIntFlag();
+    
 }
 
 
@@ -293,6 +290,7 @@ void process_run(void)
 {
     static unsigned int j = 0;
     ENABLE_MK();
+    while(1);
     do
     {
         switch(data.processState)
@@ -331,6 +329,5 @@ void process_run(void)
                 break;
         }    
     }while (1);
-    
 }
 
