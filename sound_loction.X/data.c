@@ -9,6 +9,7 @@ ST_DATA data =
     .record[1].cntT = 0,    
     .record[2].mk = MK_ERROR,
     .record[2].cntT = 0,    
-    .degree = 0
+    .degree = 0,
+    .temp = 0
 };
 ST_DATA *pData = &data;

@@ -27,6 +27,7 @@ void cmp_init()
 
 void __ISR(_COMPARATOR_3_VECTOR, ipl5) _MK0RecievedSound(void)
 {
+    data.temp++;
     TICK_PAUSE(MK0);
 }
 

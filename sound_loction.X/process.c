@@ -129,6 +129,9 @@ int process_getLedId(void)
     }
     max = data.record[2].cntT;
     min = data.record[0].cntT;
+    
+    if((max - min)<100) return false;
+        
     if(data.record[0].mk == 0)
     {
         if(data.record[1].mk == 1)
@@ -301,12 +304,7 @@ void process_run(void)
                 process_clear();
                 break;
             case STATE_OVER:
-                /*
-                mCMP3IntEnable(0);
-                mCMP3IntEnable(0);
-                mCMP3IntEnable(0);
-                */
-                LOG_DEBUG("STATE: STATE_OVER");
+                LOG_DEBUG("STATE: STATE_OVER,temp = %d", data.temp);
                 //处理数据
                 if(false == process_getLedId())
                 {

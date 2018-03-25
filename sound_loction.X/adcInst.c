@@ -112,12 +112,14 @@ void adc2_init(void)
 void __ISR(_ADC_VECTOR, ipl1) _AdcInstHandler(void)
 {
     int i = 0;
+    /*
     for(i = 0; i< 15; i++)
     {
         data.valueTemp = MAX(data.valueTemp, ReadADC10(i));
         data.temp2[i] = ReadADC10(i);
     }
     data.cntTemp++;
+    */
     INTClearFlag(INT_AD1);//中断标志清零
 }
 

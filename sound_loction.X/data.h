@@ -35,16 +35,12 @@ typedef struct
 {
     ENUM_PROCESS_STATE processState;
     ST_PULSE_RECORD record[3];
-    ST_PULSE_RECORD cnt[3];
     
     
     uint16_t degree;//°
     uint32_t distance; //mm
 
-    
-    uint16_t valueTemp;
-    uint16_t temp2[15];
-    uint16_t cntTemp;
+    uint16_t temp;
 }ST_DATA;
 
 extern ST_DATA data;
