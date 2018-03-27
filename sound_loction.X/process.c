@@ -4,10 +4,10 @@
 #include <math.h>
 #include <stdbool.h>
 #include "process.h"
-#include "cmp_extra.h"
+#include "int_ext.h"
 
 #define CLEAR_TIMER2() {TMR2 = 0;}
-#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_EXT | T2_PS_1_1, 50000)
+#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000)
 #define CLOSE_TIMER2() CloseTimer2() 
 #define GET_TIMER2_CNT()  (TMR2)
 #define SET_TIMER2_CNT(value) TMR2 = (value)
@@ -18,14 +18,14 @@ void config_count_timer()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
 }
 
-/*
+
 void __ISR(_TIMER_2_VECTOR, ipl6) _Timer2Handler(void)
 {
     CLOSE_TIMER2();
     data.processState = STATE_TIMEOUT;
     INTClearFlag(INT_T2);//中断标志清零
 }
-*/
+
 
 void TICK_PAUSE(ENUM_MK mk)
 {
@@ -38,7 +38,7 @@ void TICK_PAUSE(ENUM_MK mk)
     switch(data.processState)
     {
         case STATE_WAIT_FIRST_PULSE:
-            //OPEN_TIMER2();
+            OPEN_TIMER2();
             TMR2 = 0;
             data.record[0].mk = mk;
             data.record[0].cntT = 0;
@@ -50,11 +50,10 @@ void TICK_PAUSE(ENUM_MK mk)
             data.processState = STATE_WAIT_THIRD_PULSE;
             break;
         case STATE_WAIT_THIRD_PULSE:
-            //CLOSE_TIMER2();//停止了timer 只是关掉了中断
             data.record[2].cntT = GET_TIMER2_CNT();
             data.record[2].mk = mk;
             data.processState = STATE_OVER;
-            //CLOSE_TIMER2();
+            CLOSE_TIMER2();//只是关掉中断
             break;
         default:
             // 在STATE_OVER状态等待监测处理
@@ -76,9 +75,8 @@ static uint8_t process_getLedNum_byDegree(uint16_t degree)
 void process_clear(void)
 {
     //data.processState = STATE_IDLE;
-    //CLEAR_TIMER2();
+    CLEAR_TIMER2();
     ENABLE_MK();
-    
 }
 
 
@@ -127,7 +125,7 @@ int process_getLedId(void)
     max = data.record[2].cntT;
     min = data.record[0].cntT;
     
-    if((max - min)<100) return false;
+    if((max - min)>6000) return false;
         
     if(data.record[0].mk == 0)
     {
@@ -289,8 +287,6 @@ void process_resultOut(void)
 void process_run(void)
 {
     static unsigned int j = 0;
-    ENABLE_MK();
-    while(1);
     do
     {
         switch(data.processState)
@@ -302,7 +298,7 @@ void process_run(void)
                 process_clear();
                 break;
             case STATE_OVER:
-                LOG_DEBUG("STATE: STATE_OVER,temp = %d", data.temp);
+                LOG_DEBUG("STATE: STATE_OVER");
                 //处理数据
                 if(false == process_getLedId())
                 {
