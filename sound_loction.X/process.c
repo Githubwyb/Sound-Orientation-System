@@ -87,6 +87,7 @@ void process_reConfig(void)
 }
 
 #define PI (3.1415926535897932384626433832795)
+#define POINT_DISTANCE 5868.0
 
 typedef enum
 {
@@ -100,7 +101,7 @@ typedef enum
 
 static float angle_k = 1;
 
-#define LIGHT_DISTANSE 1500
+#define LIGHT_DISTANSE 5500
 int process_getLedId(void)
 {
     u8 processCase = 0;
@@ -109,23 +110,24 @@ int process_getLedId(void)
     int i = 0;
     float angle_relate = 0;
     float angle_led = 0;
-    u32 record[3] = {0};
+    uint16_t deltaCnt[3];
     
-    for(i = 0; i < 3; i++)
-    {
-        int j =0;
-        for(; j<3; j++)
-        {
-            if(data.record[j].mk == i)
-            {
-                record[i] = data.record[j].cntT;
-            }
-        }
-    }
+    deltaCnt[0] = abs((int)data.record[0].cntT- (int)data.record[1].cntT);
+    deltaCnt[1] = abs((int)data.record[1].cntT- (int)data.record[2].cntT);
+    deltaCnt[2] = abs((int)data.record[2].cntT- (int)data.record[0].cntT);
+    
+    if(deltaCnt[0] > POINT_DISTANCE) return false;
+    if(deltaCnt[1] > POINT_DISTANCE) return false;
+    if(deltaCnt[2] > POINT_DISTANCE) return false;
+
+    if( (deltaCnt[0]+ deltaCnt[1]) < POINT_DISTANCE*1.0527/2.0) return false;
+    if( (deltaCnt[1]+ deltaCnt[2]) < POINT_DISTANCE*1.0527/2.0) return false;
+    if( (deltaCnt[2]+ deltaCnt[0]) < POINT_DISTANCE*1.0527/2.0) return false;
+
     max = data.record[2].cntT;
-    min = data.record[0].cntT;
+    min = data.record[1].cntT;
     
-    if((max - min)>6000) return false;
+    if((max)>6000) return false;
         
     if(data.record[0].mk == 0)
     {
@@ -161,7 +163,7 @@ int process_getLedId(void)
         }
     }
 
-    angle_relate = acos((max - min) * 0.1 / LIGHT_DISTANSE) * angle_k;
+    angle_relate = PI / 2 - (acos(max * 1.0 / LIGHT_DISTANSE) + acos(min * 1.0 / LIGHT_DISTANSE)) * angle_k / 2;
 
     switch(processCase)
     {
@@ -269,6 +271,53 @@ bool process_dealData(void)
     return true;
 }
 
+#define MAX(x,y) x>y? x:y
+#define MIN(x,y) x>y? y:x
+
+
+bool process_dealData2(void)
+{
+    int first, second;
+    double interval, theta, angle, real_angle;
+    int number;
+    uint16_t deltaCnt[3];
+    
+    deltaCnt[0] = abs((int)data.record[0].cntT- (int)data.record[1].cntT);
+    deltaCnt[1] = abs((int)data.record[1].cntT- (int)data.record[2].cntT);
+    deltaCnt[2] = abs((int)data.record[2].cntT- (int)data.record[0].cntT);
+    
+    if(deltaCnt[0] > POINT_DISTANCE) return false;
+    if(deltaCnt[1] > POINT_DISTANCE) return false;
+    if(deltaCnt[2] > POINT_DISTANCE) return false;
+
+    if( (deltaCnt[0]+ deltaCnt[1]) < POINT_DISTANCE*1.0527/2.0) return false;
+    if( (deltaCnt[1]+ deltaCnt[2]) < POINT_DISTANCE*1.0527/2.0) return false;
+    if( (deltaCnt[2]+ deltaCnt[0]) < POINT_DISTANCE*1.0527/2.0) return false;
+
+    
+    first = data.record[0].mk;
+    second = data.record[1].mk;
+    interval = data.record[1].cntT - data.record[0].cntT;
+    
+    theta = acos(interval/POINT_DISTANCE)*180/PI;
+    angle = theta - 30;
+    //printf("theta is %lf angle is %lf\n", theta, angle);
+    if(second-first==1 || second-first==-2)
+    {
+        real_angle = 120*first + angle + 22.5;
+    }
+    else
+    {
+        real_angle = 120*first - angle + 22.5;
+    }
+    number = floor((real_angle+22.5)/45);
+    //printf("真实方向约为%lf\n", real_angle);
+    //printf("亮灯编号为%d\n\n", number);
+
+    data.degree = ((int)real_angle+360)%360;
+    return true;
+}
+
 void process_resultOut(void)
 {
     led_write(0x00);
@@ -326,4 +375,3 @@ void process_run(void)
         }    
     }while (1);
 }
-
