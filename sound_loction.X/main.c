@@ -53,8 +53,10 @@ void main(void)
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     led_init();
     led_write(0x00);
-    
+
     led_state_init();
+    led_start_flash();
+
     uart1_init();
     int_ext_init();
    

@@ -42,4 +42,6 @@ void led_set_degree(uint16_t degree);
 void led_state_init(void);
 void led_state_setLevel(u16 level);
 
+void led_start_flash();
+
 #endif 
