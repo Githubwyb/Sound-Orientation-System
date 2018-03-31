@@ -14,11 +14,12 @@
 
 #define CMP3ConfigInt(config)  ( mCMP3ClearIntFlag(), mCMP3SetIntPriority((config)&7), mCMP3SetIntSubPriority(((config) >> 4)&3), mCMP3IntEnable((config) >> 15) )
 
+/*
 #define ENABLE_MK()  {mCMP1IntEnable(1); mCMP2IntEnable(1); mCMP3IntEnable(1);}
 #define DISABLE_MK0()   {mCMP3IntEnable(0);  mCMP3ClearIntFlag();}
 #define DISABLE_MK1()   {mCMP1IntEnable(0);  mCMP1ClearIntFlag();}
 #define DISABLE_MK2()   {mCMP2IntEnable(0);  mCMP2ClearIntFlag();}
-
+*/
 void cmp_init();
 
 #endif /* __CMP_EXTRA_H */

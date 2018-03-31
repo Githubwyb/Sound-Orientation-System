@@ -9,6 +9,7 @@
 #include "data.h"
 #include "process.h"
 #include "int_ext.h"
+#include "incapInst.h"
 
 #define SYS_FREQ F_SYS_CLK
 /*
@@ -53,7 +54,11 @@ void main(void)
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
     led_init();
     led_write(0x00);
-    
+
+    incap_timer_init();
+    while(1);
+
+/*    
     led_state_init();
     uart1_init();
     int_ext_init();
@@ -68,6 +73,17 @@ void main(void)
 
     CMP2Close();
     CVREFClose();
+    */
     return;
+}
+
+void __ISR(_TIMER_2_VECTOR, ipl5) _Timer2Handler(void)
+{
+    static bool flag = true;
+    led_set( 1, flag);
+        
+    flag = !flag;
+    INTClearFlag(INT_T3);//中断标志清零
+    //EnableIntT1;
 }
 

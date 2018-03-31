@@ -18,14 +18,14 @@ void config_count_timer()
     ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
 }
 
-
+/*
 void __ISR(_TIMER_2_VECTOR, ipl6) _Timer2Handler(void)
 {
     CLOSE_TIMER2();
     data.processState = STATE_TIMEOUT;
     INTClearFlag(INT_T2);//中断标志清零
 }
-
+*/
 
 void TICK_PAUSE(ENUM_MK mk)
 {
@@ -271,10 +271,6 @@ bool process_dealData(void)
     return true;
 }
 
-#define MAX(x,y) x>y? x:y
-#define MIN(x,y) x>y? y:x
-
-
 bool process_dealData2(void)
 {
     int first, second;
@@ -342,14 +338,20 @@ void process_run(void)
         {
             case STATE_IDLE:
                 //清除标志位 开始任务
-                data.processState = STATE_WAIT_FIRST_PULSE;
-                //LOG_DEBUG("STATE: STATE_IDLE");
+                data.processState = STATE_WAIT_INPUT;
                 process_clear();
+                break;
+            case STATE_WAIT_INPUT:
+                //TODO:拉出数据
+
                 break;
             case STATE_OVER:
                 LOG_DEBUG("STATE: STATE_OVER");
+                //过滤数据
+                //process_dataFilter();
+            
                 //处理数据
-                if(false == process_getLedId())
+                if(false == process_dealData2())
                 {
                     LOG_DEBUG("deal data error");
                     data.processState = STATE_IDLE;

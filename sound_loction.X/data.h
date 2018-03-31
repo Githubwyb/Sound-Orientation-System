@@ -19,9 +19,7 @@ typedef enum
 typedef enum 
 {
     STATE_IDLE,
-    STATE_WAIT_FIRST_PULSE,
-    STATE_WAIT_SECOND_PULSE, 
-    STATE_WAIT_THIRD_PULSE, 
+    STATE_WAIT_INPUT, 
     STATE_OVER,
     STATE_TIMEOUT,
 }ENUM_PROCESS_STATE;
@@ -34,6 +32,8 @@ typedef struct
 typedef struct
 {
     ENUM_PROCESS_STATE processState;
+    uint8_t incapFlag = 0x00;
+    
     ST_PULSE_RECORD record[3];
     
     

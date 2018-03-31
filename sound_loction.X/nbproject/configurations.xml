@@ -13,6 +13,7 @@
       <itemPath>process.h</itemPath>
       <itemPath>cmp_extra.h</itemPath>
       <itemPath>int_ext.h</itemPath>
+      <itemPath>incapInst.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
@@ -27,6 +28,7 @@
       <itemPath>process.c</itemPath>
       <itemPath>cmp_extra.c</itemPath>
       <itemPath>int_ext.c</itemPath>
+      <itemPath>incapInst.c</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>
