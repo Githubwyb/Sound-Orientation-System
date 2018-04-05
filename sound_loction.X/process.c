@@ -349,7 +349,7 @@ void process_run(void)
             case STATE_OVER:
                 LOG_DEBUG("STATE: STATE_OVER");
                 //处理数据
-                if(false == process_getLedId())
+                if(false == process_dealData2())
                 {
                     LOG_DEBUG("deal data error");
                     data.processState = STATE_IDLE;
