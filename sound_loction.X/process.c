@@ -1,3 +1,4 @@
+#include <plib.h>
 #include "data.h"
 #include "led.h"
 #include "log.h"
@@ -6,60 +7,17 @@
 #include "process.h"
 #include "int_ext.h"
 
-#define CLEAR_TIMER2() {TMR2 = 0;}
-#define OPEN_TIMER2() OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000)
-#define CLOSE_TIMER2() CloseTimer2() 
-#define GET_TIMER2_CNT()  (TMR2)
-#define SET_TIMER2_CNT(value) TMR2 = (value)
+#define MAX_DELAY  (60000)
+#define MAX_DELAY_SHAKE  (1000)
 
-void config_count_timer()
-{
-    
-    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
-}
+#define MAX_DELTA_CNT  (60000)
 
-/*
-void __ISR(_TIMER_2_VECTOR, ipl6) _Timer2Handler(void)
-{
-    CLOSE_TIMER2();
-    data.processState = STATE_TIMEOUT;
-    INTClearFlag(INT_T2);//中断标志清零
-}
-*/
+#define MK1_BUFFER_FULL()  (IC2CONbits.ICOV)
+#define MK2_BUFFER_FULL()  (IC3CONbits.ICOV)
+#define MK3_BUFFER_FULL()  (IC4CONbits.ICOV)
 
-void TICK_PAUSE(ENUM_MK mk)
-{
-    switch(mk)
-    {
-        case MK0: {DISABLE_MK0();break;}
-        case MK1: {DISABLE_MK1();break;}    
-        case MK2: {DISABLE_MK2();break;}
-    }
-    switch(data.processState)
-    {
-        case STATE_WAIT_FIRST_PULSE:
-            OPEN_TIMER2();
-            TMR2 = 0;
-            data.record[0].mk = mk;
-            data.record[0].cntT = 0;
-            data.processState = STATE_WAIT_SECOND_PULSE;
-            break;
-        case STATE_WAIT_SECOND_PULSE:
-            data.record[1].cntT = GET_TIMER2_CNT();
-            data.record[1].mk = mk;
-            data.processState = STATE_WAIT_THIRD_PULSE;
-            break;
-        case STATE_WAIT_THIRD_PULSE:
-            data.record[2].cntT = GET_TIMER2_CNT();
-            data.record[2].mk = mk;
-            data.processState = STATE_OVER;
-            CLOSE_TIMER2();//只是关掉中断
-            break;
-        default:
-            // 在STATE_OVER状态等待监测处理
-            break;
-    }
-}
+#define PI (3.1415926535897932384626433832795)
+#define POINT_DISTANCE 5868.0
 
 static uint8_t process_getLedNum_byDegree(uint16_t degree)
 {
@@ -71,132 +29,13 @@ static uint8_t process_getLedNum_byDegree(uint16_t degree)
     return (int)((float)(degree)/45.0 + 0.5);
 }
 
-/*清除标记，使能MK中断，禁止timer中断*/
-void process_clear(void)
-{
-    //data.processState = STATE_IDLE;
-    CLEAR_TIMER2();
-    ENABLE_MK();
-}
-
-
 //调节阈值、状态灯等
 void process_reConfig(void)
 {
     
 }
 
-#define PI (3.1415926535897932384626433832795)
-#define POINT_DISTANCE 5868.0
-
-typedef enum
-{
-    CACULATE_012,
-    CACULATE_021,
-    CACULATE_102,
-    CACULATE_120,
-    CACULATE_201,
-    CACULATE_210,
-} PROCESS_CACULATE_CASE_ENUM;
-
-static float angle_k = 1;
-
-#define LIGHT_DISTANSE 5500
-int process_getLedId(void)
-{
-    u8 processCase = 0;
-    u32 max = 0;
-    u32 min = 0;
-    int i = 0;
-    float angle_relate = 0;
-    float angle_led = 0;
-    uint16_t deltaCnt[3];
-    
-    deltaCnt[0] = abs((int)data.record[0].cntT- (int)data.record[1].cntT);
-    deltaCnt[1] = abs((int)data.record[1].cntT- (int)data.record[2].cntT);
-    deltaCnt[2] = abs((int)data.record[2].cntT- (int)data.record[0].cntT);
-    
-    if(deltaCnt[0] > POINT_DISTANCE) return false;
-    if(deltaCnt[1] > POINT_DISTANCE) return false;
-    if(deltaCnt[2] > POINT_DISTANCE) return false;
-
-    if( (deltaCnt[0]+ deltaCnt[1]) < POINT_DISTANCE*1.0527/2.0) return false;
-    if( (deltaCnt[1]+ deltaCnt[2]) < POINT_DISTANCE*1.0527/2.0) return false;
-    if( (deltaCnt[2]+ deltaCnt[0]) < POINT_DISTANCE*1.0527/2.0) return false;
-
-    max = data.record[2].cntT;
-    min = data.record[1].cntT;
-    
-    if((max)>6000) return false;
-        
-    if(data.record[0].mk == 0)
-    {
-        if(data.record[1].mk == 1)
-        {
-            processCase = CACULATE_012;
-        }
-        else
-        {
-            processCase = CACULATE_021;
-        }
-    }
-    else if(data.record[0].mk == 1)
-    {
-        if(data.record[1].mk == 0)
-        {
-            processCase = CACULATE_102;
-        }
-        else
-        {
-            processCase = CACULATE_120;
-        }
-    }
-    else
-    {
-        if(data.record[1].mk == 0)
-        {
-            processCase = CACULATE_201;
-        }
-        else
-        {
-            processCase = CACULATE_210;
-        }
-    }
-
-    angle_relate = PI / 2 - (acos(max * 1.0 / LIGHT_DISTANSE) + acos(min * 1.0 / LIGHT_DISTANSE)) * angle_k / 2;
-
-    switch(processCase)
-    {
-        case CACULATE_012:
-            angle_led = 112.5 - angle_relate / PI * 180;
-            break;
-
-        case CACULATE_021:
-            angle_led = -62.5 + angle_relate / PI * 180;
-            break;
-
-        case CACULATE_102:
-            angle_led = 52.5 + angle_relate / PI * 180;
-            break;
-
-        case CACULATE_120:
-            angle_led = -127.5 - angle_relate / PI * 180;
-            break;
-
-        case CACULATE_201:
-            angle_led = -7.5 - angle_relate / PI * 180;
-            break;
-
-        case CACULATE_210:
-            angle_led = 172.5 + angle_relate / PI * 180;
-            break;
-    }
-    data.degree = ((u16)(angle_led + 360))%360;
-    return 1;
-}
-
-
-
+/*
 #define FACTOR_T (1.0/16000000.0) //时间系数(周期)
 #define FACTOR_LENGTH (FACTOR_T/340.0*1000.0) //距离系数 distance(mm) = cnt * FACTOR_LENGTH
 
@@ -212,7 +51,7 @@ int process_getLedId(void)
 #define DEGREE_CHANGE1(x) DEGRE2PI(x+115)
 
 //#define PI (3.14159265358979323846)
-bool process_dealData(void)
+bool process_dealDataxxx(void)
 {
     int i = 0;
     float cnt[3];
@@ -270,30 +109,100 @@ bool process_dealData(void)
     
     return true;
 }
+*/
 
-bool process_dealData2(void)
+bool process_dealData(void)
+{
+    int i = 0;
+    int maxCnt = 0;
+    int minCnt = 0;
+    int delayTmp[MK_FIFO_DEEP] = {0};
+    int aveDelayTmp = 0;
+    //dump cnt 
+    for(i = 0 ; i<MK_ERROR; i++)
+    {
+        
+        if(incap_dumpData( i, data.mk_record[i]) != MK_FIFO_DEEP)
+        {
+            return false;
+        }
+    }
+
+    //calc delta
+    for(i = 0 ; i<MK_ERROR; i++)
+    {
+        int j = 0;
+        for(j = 0 ; j<MK_FIFO_DEEP-1; j++)
+        {
+            data.mk_delta_cnt[i][j] = data.mk_record[i][j+1] -data.mk_record[i][j];
+            if(data.mk_delta_cnt[i][j] > MAX_DELTA_CNT) return false;
+        }
+    }
+
+    //sort
+    maxCnt = MAX(data.mk_record[0][0], MAX(data.mk_record[1][0],data.mk_record[2][0]));
+    minCnt = MIN(data.mk_record[0][0], MIN(data.mk_record[1][0],data.mk_record[2][0]));
+
+    for(i = 0 ; i<MK_ERROR; i++)
+    {
+        if(data.mk_record[i][0] == maxCnt) data.arrive_order[2] = i;
+    }
+    for(i = 0 ; i<MK_ERROR; i++)
+    {
+        if(data.mk_record[i][0] == minCnt) data.arrive_order[0] = i;
+    }
+    for(i = 0 ; i<MK_ERROR; i++)
+    {
+        if((data.mk_record[i][0] != minCnt)&&(data.mk_record[i][0] != maxCnt)) data.arrive_order[1] = i;
+    }
+
+    //ave delay
+    for(i = 0; i<MK_ERROR-1; i++)
+    {
+        int j = 0;
+        int tempDelay = 0;
+        int deltaSum = 0;
+        int maxDelay = 0;
+        int minDelay = 0;
+        
+        for(j = 0; j< MK_FIFO_DEEP; j++)
+        {
+            tempDelay = data.mk_record[data.arrive_order[i+1]][j] - data.mk_record[data.arrive_order[i]][j];
+            deltaSum += tempDelay;
+            if(0 == j)
+            {
+                maxDelay = tempDelay;
+                minDelay = tempDelay;
+            }
+            else
+            {
+                maxDelay = MAX(tempDelay, maxDelay);
+                minDelay = MIN(tempDelay, minDelay);
+
+            }
+        }
+        data.mk_ave_delay[i] = (int)((float)deltaSum/(float)MK_FIFO_DEEP);
+
+        //平均延迟 <0 或 太大 则丢弃
+        if(data.mk_ave_delay[i] < 0) return false;
+        if(data.mk_ave_delay[i] > MAX_DELAY) return false;
+
+        //延迟抖动太大 则丢弃
+        if(abs(maxDelay - minDelay)> MAX_DELAY_SHAKE) return false;
+    }
+    
+    return true;
+}
+
+void process_calc(void)
 {
     int first, second;
     double interval, theta, angle, real_angle;
     int number;
-    uint16_t deltaCnt[3];
     
-    deltaCnt[0] = abs((int)data.record[0].cntT- (int)data.record[1].cntT);
-    deltaCnt[1] = abs((int)data.record[1].cntT- (int)data.record[2].cntT);
-    deltaCnt[2] = abs((int)data.record[2].cntT- (int)data.record[0].cntT);
-    
-    if(deltaCnt[0] > POINT_DISTANCE) return false;
-    if(deltaCnt[1] > POINT_DISTANCE) return false;
-    if(deltaCnt[2] > POINT_DISTANCE) return false;
-
-    if( (deltaCnt[0]+ deltaCnt[1]) < POINT_DISTANCE*1.0527/2.0) return false;
-    if( (deltaCnt[1]+ deltaCnt[2]) < POINT_DISTANCE*1.0527/2.0) return false;
-    if( (deltaCnt[2]+ deltaCnt[0]) < POINT_DISTANCE*1.0527/2.0) return false;
-
-    
-    first = data.record[0].mk;
-    second = data.record[1].mk;
-    interval = data.record[1].cntT - data.record[0].cntT;
+    first = data.arrive_order[0];
+    second = data.arrive_order[1];
+    interval = data.mk_ave_delay[0];
     
     theta = acos(interval/POINT_DISTANCE)*180/PI;
     angle = theta - 30;
@@ -311,69 +220,97 @@ bool process_dealData2(void)
     //printf("亮灯编号为%d\n\n", number);
 
     data.degree = ((int)real_angle+360)%360;
-    return true;
 }
 
 void process_resultOut(void)
 {
     led_write(0x00);
     led_set(process_getLedNum_byDegree(data.degree), ON);
-    LOG_DEBUG("result, mk:%d %d %d, record:%d %d %d, degree:%d, led:%d",
-                        data.record[0].mk+1, data.record[1].mk+1, data.record[2].mk+1,
-                        data.record[0].cntT, data.record[1].cntT, data.record[2].cntT,
+    LOG_DEBUG("finish, mk:%d %d %d, record:0 %d %d, degree:%d, led:%d",
+                        data.arrive_order[0]+1, data.arrive_order[1]+1, data.arrive_order[2]+1,
+                        data.mk_ave_delay[0], data.mk_ave_delay[1],
                         data.degree, process_getLedNum_byDegree(data.degree));
 }
-
-/*在检测过程中 除了time2中断表示超时，不准其它中断！*/
-/*监测tick拥有最高优先级*/
-
-#include "cmp_extra.h"
 
 void process_run(void)
 {
     static unsigned int j = 0;
-    do
+    bool firstArrive = false;   
+    unsigned int startTime = 0;
+    unsigned int waitTime = 0;
+    while(1)
     {
         switch(data.processState)
         {
             case STATE_IDLE:
                 //清除标志位 开始任务
+                firstArrive = false; 
+                startTime = 0;
+                waitTime = 0;
+                //process_clear();
+                ipc_inst_init();
                 data.processState = STATE_WAIT_INPUT;
-                process_clear();
                 break;
             case STATE_WAIT_INPUT:
-                //TODO:拉出数据
+                if((false == firstArrive) && (MK1_BUFFER_FULL()||MK1_BUFFER_FULL()||MK1_BUFFER_FULL()))
+                {
+                    firstArrive = true;
+                    startTime = ReadTimer23();
+                }
+                else if(true == firstArrive)
+                {
+                    waitTime = ReadTimer23() - startTime;
+                    if (waitTime > MAX_DELAY)
+                    {
+                        LOG_DEBUG("i can not wait anymore");
+                        data.processState = STATE_IDLE;
+                        break;
+                    }
+                }
+
+                if( MK1_BUFFER_FULL()&&MK1_BUFFER_FULL()&&MK1_BUFFER_FULL())
+                {
+                    data.processState = STATE_OVER;
+                }
 
                 break;
             case STATE_OVER:
-                LOG_DEBUG("STATE: STATE_OVER");
-                //过滤数据
-                //process_dataFilter();
-            
-                //处理数据
-                if(false == process_dealData2())
+                LOG_DEBUG("STATE_OVER");
+                
+                //1.整理数据
+                if(false == process_dealData())
                 {
-                    LOG_DEBUG("deal data error");
+                    LOG_DEBUG("1.data is not perfect");
                     data.processState = STATE_IDLE;
                     break;
                 }
-                //检测配置
-                process_reConfig();
-                //输出
-                process_resultOut();     
-                data.processState = STATE_IDLE;
+
+                LOG_DEBUG("1.deal data over");
                 
+                //2.处理数据
+                process_calc();
+                LOG_DEBUG("2.calc data over");
+                
+                //3.检测配置
+                process_reConfig();
+                LOG_DEBUG("3.reconfig  over");
+                
+                //4.输出
+                process_resultOut();     
+                LOG_DEBUG("4.output  over");
+
+
+                //延时
                 j = 6553500;
                 while(--j)
                 {
                     ;
                 }
+                data.processState = STATE_IDLE;
                 break;
-                
-            case STATE_TIMEOUT:
-                LOG_DEBUG("STATE: STATE_ERROR");
+            default:
                 data.processState = STATE_IDLE;
                 break;
         }    
-    }while (1);
+    }
 }

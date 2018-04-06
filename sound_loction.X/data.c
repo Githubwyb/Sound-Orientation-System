@@ -3,13 +3,14 @@
 ST_DATA data = 
 {
     .processState = STATE_IDLE,
-    .record[0].mk = MK_ERROR,
-    .record[0].cntT = 0,
-    .record[1].mk = MK_ERROR,
-    .record[1].cntT = 0,    
-    .record[2].mk = MK_ERROR,
-    .record[2].cntT = 0,    
+
+    .mk_record = {0},
+    .mk_delta_cnt = {0},
+ 
+    .arrive_order = {MK_ERROR},
+    .mk_ave_delay = {0},
+    
     .degree = 0,
-    .temp = 0
+    .distance = 0
 };
 ST_DATA *pData = &data;

@@ -45,45 +45,21 @@
 
 void main(void) 
 {
+    int i = 0;
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
     
     /*必须放在前面，因为后面初始化用到timer*/
-    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
+    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);                                                 
     led_init();
     led_write(0x00);
-
-    incap_timer_init();
-    while(1);
-
-/*    
-    led_state_init();
     uart1_init();
-    int_ext_init();
-   
     LOG_DEBUG("hello world");
-
-    ConfigIntTimer2(T2_INT_ON | T2_INT_PRIOR_6 | T2_INT_SUB_PRIOR_0);
-    //OpenTimer2(T2_ON | T2_SOURCE_INT | T2_PS_1_1, 50000);
 
     //主流程
     process_run();
 
-    CMP2Close();
-    CVREFClose();
-    */
     return;
 }
-
-void __ISR(_TIMER_2_VECTOR, ipl5) _Timer2Handler(void)
-{
-    static bool flag = true;
-    led_set( 1, flag);
-        
-    flag = !flag;
-    INTClearFlag(INT_T3);//中断标志清零
-    //EnableIntT1;
-}
-

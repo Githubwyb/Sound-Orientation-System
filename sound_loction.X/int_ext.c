@@ -32,15 +32,15 @@ void __ISR(_CHANGE_NOTICE_VECTOR, ipl5) _ChangeNoticeHandler(void)
     
     if( CNSTATBbits.CNSTATB15 )
     {
-        TICK_PAUSE(MK0);
+        //TICK_PAUSE(MK0);
     }
     else if( CNSTATBbits.CNSTATB1)
     {
-        TICK_PAUSE(MK1);
+        //TICK_PAUSE(MK1);
     }
     else if( CNSTATBbits.CNSTATB3 )
     {
-        TICK_PAUSE(MK2);
+        //TICK_PAUSE(MK2);
     }
     
 }

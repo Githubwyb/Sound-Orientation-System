@@ -8,6 +8,7 @@ typedef enum  {
     true,
 } bool;*/
 
+#define MK_FIFO_DEEP (4)
 typedef enum 
 {
     MK0 = 0x00,
@@ -21,7 +22,6 @@ typedef enum
     STATE_IDLE,
     STATE_WAIT_INPUT, 
     STATE_OVER,
-    STATE_TIMEOUT,
 }ENUM_PROCESS_STATE;
 
 typedef struct
@@ -31,16 +31,21 @@ typedef struct
 }ST_PULSE_RECORD;
 typedef struct
 {
+    //state
     ENUM_PROCESS_STATE processState;
-    uint8_t incapFlag = 0x00;
+
+    //record
+    uint32_t mk_record[3][MK_FIFO_DEEP];//原始记录
+    uint16_t mk_delta_cnt[3][MK_FIFO_DEEP-1];//每个mk四次记录的delta_t
+
+    //sort
+    uint8_t  arrive_order[3];//到达顺序
+    int mk_ave_delay[2];//按照到达顺序的mk之间的平均延迟
     
-    ST_PULSE_RECORD record[3];
-    
-    
+    //result
     uint16_t degree;//°
     uint32_t distance; //mm
-
-    uint16_t temp;
+    
 }ST_DATA;
 
 extern ST_DATA data;
