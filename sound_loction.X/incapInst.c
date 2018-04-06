@@ -3,14 +3,7 @@
 #include <stdbool.h>
 #include "data.h"
 #include "log.h"
-#define FOSC           80E6
-#define PB_DIV         8
-#define PRESCALE       256
-#define MSEC           10E-3
-#define T1_TICK       (500 * MSEC * FOSC)/(PB_DIV * PRESCALE)
 
-/////////////////////////////////////////////
-/////////////////////////////////////////////
 /*
     初始化32位定时器
 */
@@ -56,14 +49,27 @@ void ipc_inst_init(void)
     mIC3ClearIntFlag();
     mIC4ClearIntFlag();
 
-    OpenCapture2(IC_ON| IC_SP_EVERY_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE | IC_FEDGE_FALL);
-    OpenCapture3(IC_ON| IC_SP_EVERY_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE | IC_FEDGE_FALL);
-    OpenCapture4(IC_ON| IC_SP_EVERY_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE | IC_FEDGE_FALL);
-    
+    OpenCapture2(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
+    OpenCapture3(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
+    OpenCapture4(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
+
+
+    while( mIC2CaptureReady())
+    {
+        mIC2ReadCapture();
+    }
+    while( mIC3CaptureReady())
+    {
+        mIC3ReadCapture();
+    }
+     while( mIC4CaptureReady())
+    {
+        mIC4ReadCapture();
+    }
 }
 
 /*
-*buffer must >= 4
+*buffer must >= MK_FIFO_DEEP
 *return buffer len
 */
 int incap_dumpData(ENUM_MK mk, uint32_t *buffer)
@@ -76,33 +82,33 @@ int incap_dumpData(ENUM_MK mk, uint32_t *buffer)
             while( mIC2CaptureReady())
             {
                 temp = (uint32_t)mIC2ReadCapture();
-                if(i<4)
+                if(i<MK_FIFO_DEEP)
                 {
                     *(buffer + i) = temp;
+                    i++;
                 }
-                i++;
             }
             break;
         case MK1:
             while( mIC3CaptureReady())
             {
                 temp = (uint32_t)mIC3ReadCapture();
-                if(i<4)
+                if(i<MK_FIFO_DEEP)
                 {
                     *(buffer + i) = temp;
-                }
-                i++;
+                    i++;
+                }  
             }
             break;
         case MK2:
             while( mIC4CaptureReady())
             {
                 temp = (uint32_t)mIC4ReadCapture();
-                if(i<4)
+                if(i<MK_FIFO_DEEP)
                 {
                     *(buffer + i) = temp;
+                    i++;
                 }
-                i++;
             }
             break;
         default:

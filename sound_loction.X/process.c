@@ -7,10 +7,10 @@
 #include "process.h"
 #include "int_ext.h"
 
-#define MAX_DELAY  (60000)
-#define MAX_DELAY_SHAKE  (1000)
+#define MAX_DELAY  (6000) //mk之间的最大延迟
+#define MAX_DELAY_SHAKE  (832)//mk沿最大抖动时间 52us
 
-#define MAX_DELTA_CNT  (60000)
+#define MAX_DELTA_CNT  (20000)//同一mk两个沿之间的最大时间差
 
 #define MK1_BUFFER_FULL()  (IC2CONbits.ICOV)
 #define MK2_BUFFER_FULL()  (IC3CONbits.ICOV)
@@ -121,9 +121,11 @@ bool process_dealData(void)
     //dump cnt 
     for(i = 0 ; i<MK_ERROR; i++)
     {
-        
-        if(incap_dumpData( i, data.mk_record[i]) != MK_FIFO_DEEP)
+        int rc = 0;
+        rc = incap_dumpData( i, data.mk_record[i]);
+        if(rc != MK_FIFO_DEEP)
         {
+            LOG_DEBUG("error: mk%d fifo error, real cnt:%d", i, rc);
             return false;
         }
     }
@@ -135,7 +137,13 @@ bool process_dealData(void)
         for(j = 0 ; j<MK_FIFO_DEEP-1; j++)
         {
             data.mk_delta_cnt[i][j] = data.mk_record[i][j+1] -data.mk_record[i][j];
-            if(data.mk_delta_cnt[i][j] > MAX_DELTA_CNT) return false;
+            if(data.mk_delta_cnt[i][j] > MAX_DELTA_CNT)
+            {
+                LOG_DEBUG("error: mk%d_delta_cnt[%d] > %d,is %d",i,j,MAX_DELTA_CNT, data.mk_delta_cnt[i][j]);
+                return false;
+            }
+
+
         }
     }
 
@@ -156,6 +164,7 @@ bool process_dealData(void)
         if((data.mk_record[i][0] != minCnt)&&(data.mk_record[i][0] != maxCnt)) data.arrive_order[1] = i;
     }
 
+    LOG_DEBUG("arrive record: %d, %d, %d", data.arrive_order[0], data.arrive_order[1], data.arrive_order[2]);
     //ave delay
     for(i = 0; i<MK_ERROR-1; i++)
     {
@@ -184,11 +193,26 @@ bool process_dealData(void)
         data.mk_ave_delay[i] = (int)((float)deltaSum/(float)MK_FIFO_DEEP);
 
         //平均延迟 <0 或 太大 则丢弃
-        if(data.mk_ave_delay[i] < 0) return false;
-        if(data.mk_ave_delay[i] > MAX_DELAY) return false;
+        if(data.mk_ave_delay[i] < 0)
+        {
+            LOG_DEBUG("error: mk_ave_delay[%d] < 0", i);
+            return false;
+        }
+        if(data.mk_ave_delay[i] > MAX_DELAY)
+        {
+            LOG_DEBUG("error: mk_ave_delay[%d] > %d, is %d", i, MAX_DELAY, data.mk_ave_delay[i]);
+            return false;
+        }
+
+        
 
         //延迟抖动太大 则丢弃
-        if(abs(maxDelay - minDelay)> MAX_DELAY_SHAKE) return false;
+        if(abs(maxDelay - minDelay)> MAX_DELAY_SHAKE)
+        {
+            LOG_DEBUG("error: delay_shake[i] > %d, is %d", MAX_DELAY_SHAKE, abs(maxDelay - minDelay));
+            return false;    
+        }
+            
     }
     
     return true;
@@ -227,7 +251,7 @@ void process_resultOut(void)
     led_write(0x00);
     led_set(process_getLedNum_byDegree(data.degree), ON);
     LOG_DEBUG("finish, mk:%d %d %d, record:0 %d %d, degree:%d, led:%d",
-                        data.arrive_order[0]+1, data.arrive_order[1]+1, data.arrive_order[2]+1,
+                        data.arrive_order[0], data.arrive_order[1], data.arrive_order[2],
                         data.mk_ave_delay[0], data.mk_ave_delay[1],
                         data.degree, process_getLedNum_byDegree(data.degree));
 }
@@ -247,6 +271,7 @@ void process_run(void)
                 firstArrive = false; 
                 startTime = 0;
                 waitTime = 0;
+                LOG_DEBUG("*********************************************");
                 //process_clear();
                 ipc_inst_init();
                 data.processState = STATE_WAIT_INPUT;

@@ -8,7 +8,7 @@ typedef enum  {
     true,
 } bool;*/
 
-#define MK_FIFO_DEEP (4)
+#define MK_FIFO_DEEP (2)
 typedef enum 
 {
     MK0 = 0x00,
