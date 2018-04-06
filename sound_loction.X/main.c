@@ -54,7 +54,7 @@ void main(void)
     led_init();
     led_write(0x00);
     
-    led_state_init();
+    //led_state_init();
     uart1_init();
     int_ext_init();
    
