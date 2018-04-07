@@ -5,16 +5,9 @@
 #include <math.h>
 #include <stdbool.h>
 #include "process.h"
-#include "int_ext.h"
+//#include "int_ext.h"
+#include "incapInst.h"
 
-#define MAX_DELAY  (6000) //mk之间的最大延迟
-#define MAX_DELAY_SHAKE  (832)//mk沿最大抖动时间 52us
-
-#define MAX_DELTA_CNT  (20000)//同一mk两个沿之间的最大时间差
-
-#define MK1_BUFFER_FULL()  (IC2CONbits.ICOV)
-#define MK2_BUFFER_FULL()  (IC3CONbits.ICOV)
-#define MK3_BUFFER_FULL()  (IC4CONbits.ICOV)
 
 #define PI (3.1415926535897932384626433832795)
 #define POINT_DISTANCE 5868.0
@@ -248,6 +241,9 @@ void process_calc(void)
 
 void process_resultOut(void)
 {
+    int i = 6553500;
+    led_write(0xff);
+    while(--i) {};
     led_write(0x00);
     led_set(process_getLedNum_byDegree(data.degree), ON);
     LOG_DEBUG("finish, mk:%d %d %d, record:0 %d %d, degree:%d, led:%d",
@@ -277,7 +273,7 @@ void process_run(void)
                 data.processState = STATE_WAIT_INPUT;
                 break;
             case STATE_WAIT_INPUT:
-                if((false == firstArrive) && (MK1_BUFFER_FULL()||MK1_BUFFER_FULL()||MK1_BUFFER_FULL()))
+                if((false == firstArrive) && (MK0_BUFFER_FULL()||MK1_BUFFER_FULL()||MK2_BUFFER_FULL()))
                 {
                     firstArrive = true;
                     startTime = ReadTimer23();
@@ -285,15 +281,16 @@ void process_run(void)
                 else if(true == firstArrive)
                 {
                     waitTime = ReadTimer23() - startTime;
-                    if (waitTime > MAX_DELAY)
+                    if (waitTime > 100000)
                     {
+                        uint32_t buffer[MK_FIFO_DEEP];
                         LOG_DEBUG("i can not wait anymore");
                         data.processState = STATE_IDLE;
                         break;
                     }
                 }
 
-                if( MK1_BUFFER_FULL()&&MK1_BUFFER_FULL()&&MK1_BUFFER_FULL())
+                if( MK0_BUFFER_FULL()&&MK1_BUFFER_FULL()&&MK2_BUFFER_FULL())
                 {
                     data.processState = STATE_OVER;
                 }

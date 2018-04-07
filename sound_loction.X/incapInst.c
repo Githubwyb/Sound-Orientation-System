@@ -49,9 +49,9 @@ void ipc_inst_init(void)
     mIC3ClearIntFlag();
     mIC4ClearIntFlag();
 
-    OpenCapture2(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
-    OpenCapture3(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
-    OpenCapture4(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_2CAPTURE );
+    OpenCapture2(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE );
+    OpenCapture3(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE );
+    OpenCapture4(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE );
 
 
     while( mIC2CaptureReady())

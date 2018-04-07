@@ -8,7 +8,7 @@
 #include "log.h"
 #include "data.h"
 #include "process.h"
-#include "int_ext.h"
+//#include "int_ext.h"
 #include "incapInst.h"
 
 #define SYS_FREQ F_SYS_CLK
