@@ -58,6 +58,8 @@ void main(void)
     uart1_init();
     LOG_DEBUG("hello world");
 
+    led_flash_powerOn();
+    
     //主流程
     process_run();
 
