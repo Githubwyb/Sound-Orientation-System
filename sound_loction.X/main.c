@@ -55,7 +55,7 @@ void main(void)
     //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);   
     uart1_init();
     led_init();
-    led_init_pwm();
+    pwm_led_run();
     LOG_DEBUG("hello world");
     led_flash_powerOn();
     

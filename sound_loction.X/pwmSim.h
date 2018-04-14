@@ -7,35 +7,14 @@
 
 #include "data.h"
 #include <stdbool.h>
-#define MAX_PWM_INST 10
+#define PWM_LED_NUM 8
 #define PWM_PERIOD_CNT 32
 
-#define PWM_ERROR_INDEX (-1)
+void pwm_led_run(void);
+void pwm_led_stop(void);
 
-typedef void(*pwm_cmp_handler)(void);
-
-
-typedef enum
-{
-    PWM_CMP_L,
-    PWM_CMP_H,
-}ENUM_PWM_CMP_OUT;
-
-typedef struct
-{
-    bool en;
-    int cmpCnt;
-    ENUM_PWM_CMP_OUT lstState;
-    pwm_cmp_handler handler_l;
-    pwm_cmp_handler handler_h;
-
-}ST_PWM_INST;
-
-void pwm_run(void);
-void pwm_stop(void);
-int pwm_request (int rate, pwm_cmp_handler handler_l, pwm_cmp_handler handler_h);
-bool pwm_reConfig(int pwmIndex, int newRate);
-bool pwm_cancle(int pwmIndex);
+void pwm_led_reConfig(int ledIndex, float light);
+void pwm_led_reConfig_batch(float *light);
 
 #endif	/* __PROCESS_H__ */
 
