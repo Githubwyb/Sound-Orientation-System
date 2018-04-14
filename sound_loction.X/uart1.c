@@ -9,7 +9,7 @@
 #define PBCLK		    F_PB_CLK
 #define UART1_BAUDRATE	115200
 
-#define UART1_INT_PRIOR       INT_PRIORITY_LEVEL_3
+#define UART1_INT_PRIOR       INT_PRIORITY_LEVEL_5
 #define UART1_INT_SUB_PRIOR   INT_SUB_PRIORITY_LEVEL_0
 
 #define UART1_BUFFER_LEN (1024*2)
@@ -163,7 +163,7 @@ void uart1_sendData( const uint8_t *data, uint16_t length )
     }
 }
 
-void __ISR( _UART_1_VECTOR, ipl3) _UART1_INT_handle( void )
+void __ISR( _UART_1_VECTOR, ipl5) _UART1_INT_handle( void )
 {
     
 	if( INTGetFlag( INT_SOURCE_UART_RX( UART1 ) ) )

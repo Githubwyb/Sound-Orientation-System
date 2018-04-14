@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c cmp_extra.c int_ext.c incapInst.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c cmp_extra.c int_ext.c incapInst.c pwmSim.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o ${OBJECTDIR}/cmp_extra.o ${OBJECTDIR}/int_ext.o ${OBJECTDIR}/incapInst.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d ${OBJECTDIR}/uart1.o.d ${OBJECTDIR}/adcInst.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/protocol.o.d ${OBJECTDIR}/data.o.d ${OBJECTDIR}/process.o.d ${OBJECTDIR}/cmp_extra.o.d ${OBJECTDIR}/int_ext.o.d ${OBJECTDIR}/incapInst.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o ${OBJECTDIR}/cmp_extra.o ${OBJECTDIR}/int_ext.o ${OBJECTDIR}/incapInst.o ${OBJECTDIR}/pwmSim.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.o.d ${OBJECTDIR}/led.o.d ${OBJECTDIR}/timer1.o.d ${OBJECTDIR}/log.o.d ${OBJECTDIR}/uart1.o.d ${OBJECTDIR}/adcInst.o.d ${OBJECTDIR}/debug.o.d ${OBJECTDIR}/protocol.o.d ${OBJECTDIR}/data.o.d ${OBJECTDIR}/process.o.d ${OBJECTDIR}/cmp_extra.o.d ${OBJECTDIR}/int_ext.o.d ${OBJECTDIR}/incapInst.o.d ${OBJECTDIR}/pwmSim.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o ${OBJECTDIR}/cmp_extra.o ${OBJECTDIR}/int_ext.o ${OBJECTDIR}/incapInst.o
+OBJECTFILES=${OBJECTDIR}/main.o ${OBJECTDIR}/led.o ${OBJECTDIR}/timer1.o ${OBJECTDIR}/log.o ${OBJECTDIR}/uart1.o ${OBJECTDIR}/adcInst.o ${OBJECTDIR}/debug.o ${OBJECTDIR}/protocol.o ${OBJECTDIR}/data.o ${OBJECTDIR}/process.o ${OBJECTDIR}/cmp_extra.o ${OBJECTDIR}/int_ext.o ${OBJECTDIR}/incapInst.o ${OBJECTDIR}/pwmSim.o
 
 # Source Files
-SOURCEFILES=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c cmp_extra.c int_ext.c incapInst.c
+SOURCEFILES=main.c led.c timer1.c log.c uart1.c adcInst.c debug.c protocol.c data.c process.c cmp_extra.c int_ext.c incapInst.c pwmSim.c
 
 
 CFLAGS=
@@ -178,6 +178,12 @@ ${OBJECTDIR}/incapInst.o: incapInst.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/incapInst.o 
 	@${FIXDEPS} "${OBJECTDIR}/incapInst.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/incapInst.o.d" -o ${OBJECTDIR}/incapInst.o incapInst.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
+${OBJECTDIR}/pwmSim.o: pwmSim.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pwmSim.o.d 
+	@${RM} ${OBJECTDIR}/pwmSim.o 
+	@${FIXDEPS} "${OBJECTDIR}/pwmSim.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1 -fframe-base-loclist  -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwmSim.o.d" -o ${OBJECTDIR}/pwmSim.o pwmSim.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
 else
 ${OBJECTDIR}/main.o: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -256,6 +262,12 @@ ${OBJECTDIR}/incapInst.o: incapInst.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/incapInst.o.d 
 	@${RM} ${OBJECTDIR}/incapInst.o 
 	@${FIXDEPS} "${OBJECTDIR}/incapInst.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/incapInst.o.d" -o ${OBJECTDIR}/incapInst.o incapInst.c    -legacy-libc  $(COMPARISON_BUILD) 
+	
+${OBJECTDIR}/pwmSim.o: pwmSim.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/pwmSim.o.d 
+	@${RM} ${OBJECTDIR}/pwmSim.o 
+	@${FIXDEPS} "${OBJECTDIR}/pwmSim.o.d" $(SILENT) -rsi ${MP_CC_DIR}../  -c ${MP_CC}  $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/pwmSim.o.d" -o ${OBJECTDIR}/pwmSim.o pwmSim.c    -legacy-libc  $(COMPARISON_BUILD) 
 	
 endif
 

@@ -14,6 +14,7 @@
       <itemPath>cmp_extra.h</itemPath>
       <itemPath>int_ext.h</itemPath>
       <itemPath>incapInst.h</itemPath>
+      <itemPath>pwmSim.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles" displayName="源文件" projectFiles="true">
       <itemPath>main.c</itemPath>
@@ -29,6 +30,7 @@
       <itemPath>cmp_extra.c</itemPath>
       <itemPath>int_ext.c</itemPath>
       <itemPath>incapInst.c</itemPath>
+      <itemPath>pwmSim.c</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript" displayName="链接器文件" projectFiles="true">
     </logicalFolder>
@@ -237,7 +239,7 @@
         <property key="memories.programmemory.partition2.start"
                   value="${memories.programmemory.partition2.start.value}"/>
         <property key="memories.programmemory.start" value="0x1d000000"/>
-        <property key="poweroptions.powerenable" value="false"/>
+        <property key="poweroptions.powerenable" value="true"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>

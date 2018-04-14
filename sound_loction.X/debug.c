@@ -33,9 +33,18 @@ static int cmd_pwm(const unsigned char* cmdString, unsigned short length)
     return 0;
 }
 
+extern int indexXX;
+static int cmd_test(const unsigned char* cmdString, unsigned short length)
+{
+
+    sscanf((const char *)cmdString, "test:%d", &indexXX);
+    LOG_DEBUG("change indexXX:%d", indexXX);
+}
+
 static CMD_MAP cmd_map[MAX_CMD_NUMBER] =
 {
         {"pwm",       cmd_pwm},
+        {"test",      cmd_test},
 };
 
 int debug_proc(const unsigned char* cmdString, unsigned short length)

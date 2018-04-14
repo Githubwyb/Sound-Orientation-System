@@ -9,6 +9,11 @@ typedef enum  {
 } bool;*/
 
 #define MK_FIFO_DEEP (2)
+
+#define PI (3.1415926535897932384626433832795)
+#define POINT_DISTANCE 5868.0
+
+
 typedef enum 
 {
     MK0 = 0x00,

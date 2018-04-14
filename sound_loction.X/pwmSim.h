@@ -6,13 +6,14 @@
 #define	__PWM_SIM_H__
 
 #include "data.h"
-
+#include <stdbool.h>
 #define MAX_PWM_INST 10
 #define PWM_PERIOD_CNT 32
 
 #define PWM_ERROR_INDEX (-1)
 
-typedef (void*)pwm_cmp_handler(void);
+typedef void(*pwm_cmp_handler)(void);
+
 
 typedef enum
 {
@@ -23,7 +24,7 @@ typedef enum
 typedef struct
 {
     bool en;
-    uint32_t cmpCnt;
+    int cmpCnt;
     ENUM_PWM_CMP_OUT lstState;
     pwm_cmp_handler handler_l;
     pwm_cmp_handler handler_h;
@@ -32,8 +33,8 @@ typedef struct
 
 void pwm_run(void);
 void pwm_stop(void);
-int pwm_request (uint32_t rate, pwm_cmp_handler handler_l, pwm_cmp_handler handler_h);
-bool pwm_reConfig(int pwmIndex, uint32_t newRate);
+int pwm_request (int rate, pwm_cmp_handler handler_l, pwm_cmp_handler handler_h);
+bool pwm_reConfig(int pwmIndex, int newRate);
 bool pwm_cancle(int pwmIndex);
 
 #endif	/* __PROCESS_H__ */

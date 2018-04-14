@@ -8,10 +8,6 @@
 //#include "int_ext.h"
 #include "incapInst.h"
 
-
-#define PI (3.1415926535897932384626433832795)
-#define POINT_DISTANCE 5868.0
-
 static uint8_t process_getLedNum_byDegree(uint16_t degree)
 {
     uint8_t led = 0;

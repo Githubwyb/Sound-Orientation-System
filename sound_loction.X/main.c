@@ -52,12 +52,11 @@ void main(void)
     INTEnableInterrupts();
     
     /*必须放在前面，因为后面初始化用到timer*/
-    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);                                                 
-    led_init();
-    led_write(0x00);
+    //TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);   
     uart1_init();
+    led_init();
+    led_init_pwm();
     LOG_DEBUG("hello world");
-
     led_flash_powerOn();
     
     //主流程
