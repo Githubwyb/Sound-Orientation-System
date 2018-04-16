@@ -41,4 +41,9 @@ void led_write(u8 s);
 void led_state_init(void);
 void led_state_setLevel(u16 level);
 
+void led_flash_powerOn(void);
+void led_flash_biu(int ledIndex);
+
+
+
 #endif 

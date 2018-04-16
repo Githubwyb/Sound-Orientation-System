@@ -114,41 +114,36 @@ u8 start_flash_arrya[32][8] = {
 };
     
 
-int indexXX = 0;
+int indexXX = 6;
 
 void led_flash_powerOn(void)
 {
     int i = 0;
-    float shift = 0.0f;
     float light[8] = {0.0};
-    float temp[8] = {0.5,0.2,0.05,0.0,0.0,0.0,0.0,0.0};
-    
+    float temp[8] = {0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
     while(1)
     {
-        int j = 1200000;
+        int j = 2000000;
         
         for( i = 0; i < 8; i++)
         {
             light[i] = temp[(i+indexXX)%8];
         }
         pwm_led_reConfig_batch(light);
-        indexXX == ++indexXX%8;
+        indexXX++;
         while(j--);
+        if(indexXX > 24) break;
     }
-
-    while(1)
-    {
-        int j = 6553500;
-        
-        for( i=0; i < 8 ; i++)
-        {
-            light[i] = fabs(0.5*sin(PI/16*i + shift));
-        }
-        pwm_led_reConfig_batch(light);
-        
-        shift += PI/16;
-        while(j--);
-    }
+    
 }
+
+void led_flash_biu(int ledIndex)
+{
+    int i = 0;
+    float light[8] = {0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8};
+    pwm_led_reConfig_batch(light);
+    pwm_led_lock_en(ledIndex);
+}
+
 

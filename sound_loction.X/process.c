@@ -237,11 +237,12 @@ void process_calc(void)
 
 void process_resultOut(void)
 {
-    int i = 6553500;
-    led_write(0xff);
-    while(--i) {};
-    led_write(0x00);
-    led_set(process_getLedNum_byDegree(data.degree), ON);
+    int j = 3553500;
+    pwm_led_run();
+    led_flash_biu(process_getLedNum_byDegree(data.degree));
+    while(--j);
+    pwm_led_stop();
+    
     LOG_DEBUG("finish, mk:%d %d %d, record:0 %d %d, degree:%d, led:%d",
                         data.arrive_order[0], data.arrive_order[1], data.arrive_order[2],
                         data.mk_ave_delay[0], data.mk_ave_delay[1],
@@ -319,11 +320,9 @@ void process_run(void)
 
 
                 //延时
-                j = 6553500;
-                while(--j)
-                {
-                    ;
-                }
+                j = 12000000;
+                while(--j);
+                
                 data.processState = STATE_IDLE;
                 break;
             default:
