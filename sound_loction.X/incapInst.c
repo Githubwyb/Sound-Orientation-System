@@ -28,7 +28,7 @@ mk1 -> PB14 ->IC2
 mk2 -> PB1  ->IC3
 mk3 -> PB3  ->IC4
 */
-void ipc_inst_init(void)
+void incap_inst_init(void)
 {
     incap_timer_init();
     
@@ -53,7 +53,7 @@ void ipc_inst_init(void)
     OpenCapture3(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE );
     OpenCapture4(IC_ON| IC_EVERY_FALL_EDGE | IC_CAP_32BIT| IC_INT_4CAPTURE );
 
-
+    //开始前先清除fifo
     while( mIC2CaptureReady())
     {
         mIC2ReadCapture();
@@ -117,7 +117,14 @@ int incap_dumpData(ENUM_MK mk, uint32_t *buffer)
     return i;
 }
 
+/*32位定时器中断入口*/
+void __ISR(_TIMER_3_VECTOR, ipl5) _Timer3Handler(void)
+{
+    LOG_DEBUG("timer-32bit timer out!");
+    INTClearFlag(INT_T3);//中断标志清零
+}
 
+/*
 // TODU: 调整中断入口和标志位
 void __ISR(_INPUT_CAPTURE_2_VECTOR, ipl5) _incap2Handler(void)
 {
@@ -136,12 +143,5 @@ void __ISR(_INPUT_CAPTURE_4_VECTOR, ipl5) _incap4Handler(void)
     LOG_DEBUG("here");
     mIC4ClearIntFlag();
 }
-
-/*32位定时器中断入口*/
-void __ISR(_TIMER_3_VECTOR, ipl5) _Timer3Handler(void)
-{
-    LOG_DEBUG("timer-32bit timer out!");
-    INTClearFlag(INT_T3);//中断标志清零
-}
-
+*/
 

@@ -2,11 +2,13 @@
 #define	__DATA_H__
 
 #include <stdint.h>
+
 /*
 typedef enum  {
     false,
     true,
-} bool;*/
+} bool;
+*/
 
 #define MK_FIFO_DEEP (2)
 
@@ -53,7 +55,18 @@ typedef struct
     
 }ST_DATA;
 
+typedef struct
+{
+    int maxWaitCnt;
+    int maxDelayCnt;        //mk之间的最大延迟
+    int maxDelayCntShake;   //mk沿最大抖动时间 832 = 52us
+    int minDeltaCnt;        //同一mk两个沿之间的最小时间差
+    int maxDeltaCnt;        //同一mk两个沿之间的最大时间差
+    
+}ST_SETTING;
+
 extern ST_DATA data;
+extern ST_SETTING setting;
 
 #endif	/* __DATA_H__ */
 

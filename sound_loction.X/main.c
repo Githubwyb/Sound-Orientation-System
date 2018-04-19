@@ -45,7 +45,6 @@
 
 void main(void) 
 {
-    int i = 0;
     SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
@@ -55,8 +54,9 @@ void main(void)
     TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);   
     uart1_init();
     led_init();
+    LOG_DEBUG("SoundLocatorV2.0");
+    
     pwm_led_run();
-    LOG_DEBUG("hello world");
     led_flash_powerOn();
     pwm_led_stop();
     

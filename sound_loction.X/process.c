@@ -107,6 +107,7 @@ bool process_dealData(void)
     int minCnt = 0;
     int delayTmp[MK_FIFO_DEEP] = {0};
     int aveDelayTmp = 0;
+    
     //dump cnt 
     for(i = 0 ; i<MK_ERROR; i++)
     {
@@ -114,7 +115,7 @@ bool process_dealData(void)
         rc = incap_dumpData( i, data.mk_record[i]);
         if(rc != MK_FIFO_DEEP)
         {
-            LOG_DEBUG("error: mk%d fifo error, real cnt:%d", i, rc);
+            LOG_ERROR("mk%d fifo error, real cnt:%d", i, rc);
             return false;
         }
     }
@@ -126,13 +127,11 @@ bool process_dealData(void)
         for(j = 0 ; j<MK_FIFO_DEEP-1; j++)
         {
             data.mk_delta_cnt[i][j] = data.mk_record[i][j+1] -data.mk_record[i][j];
-            if(data.mk_delta_cnt[i][j] > MAX_DELTA_CNT)
+            if( (data.mk_delta_cnt[i][j] > setting.maxDeltaCnt) || (data.mk_delta_cnt[i][j] < setting.minDeltaCnt))
             {
-                LOG_DEBUG("error: mk%d_delta_cnt[%d] > %d,is %d",i,j,MAX_DELTA_CNT, data.mk_delta_cnt[i][j]);
+                LOG_ERROR("mk%d_delta_cnt[%d] > %d,is %d", i, j, setting.maxDeltaCnt, data.mk_delta_cnt[i][j]);
                 return false;
             }
-
-
         }
     }
 
@@ -153,7 +152,7 @@ bool process_dealData(void)
         if((data.mk_record[i][0] != minCnt)&&(data.mk_record[i][0] != maxCnt)) data.arrive_order[1] = i;
     }
 
-    LOG_DEBUG("arrive record: %d, %d, %d", data.arrive_order[0], data.arrive_order[1], data.arrive_order[2]);
+    //sLOG_DEBUG("arrive record: %d, %d, %d", data.arrive_order[0], data.arrive_order[1], data.arrive_order[2]);
     //ave delay
     for(i = 0; i<MK_ERROR-1; i++)
     {
@@ -184,21 +183,19 @@ bool process_dealData(void)
         //平均延迟 <0 或 太大 则丢弃
         if(data.mk_ave_delay[i] < 0)
         {
-            LOG_DEBUG("error: mk_ave_delay[%d] < 0", i);
+            LOG_ERROR("mk_ave_delay[%d] < 0", i);
             return false;
         }
-        if(data.mk_ave_delay[i] > MAX_DELAY)
+        if(data.mk_ave_delay[i] > setting.maxDelayCnt)
         {
-            LOG_DEBUG("error: mk_ave_delay[%d] > %d, is %d", i, MAX_DELAY, data.mk_ave_delay[i]);
+            LOG_ERROR("mk_ave_delay[%d] > %d, is %d", i, setting.maxDelayCnt, data.mk_ave_delay[i]);
             return false;
         }
-
-        
 
         //延迟抖动太大 则丢弃
-        if(abs(maxDelay - minDelay)> MAX_DELAY_SHAKE)
+        if(abs(maxDelay - minDelay)> setting.maxDelayCntShake)
         {
-            LOG_DEBUG("error: delay_shake[i] > %d, is %d", MAX_DELAY_SHAKE, abs(maxDelay - minDelay));
+            LOG_ERROR("delay_shake[i] > %d, is %d", setting.maxDelayCntShake, abs(maxDelay - minDelay));
             return false;    
         }
             
@@ -216,7 +213,8 @@ void process_calc(void)
     first = data.arrive_order[0];
     second = data.arrive_order[1];
     interval = data.mk_ave_delay[0];
-    
+
+    LOG_DEBUG("********>first:%d, second:%d, deltaCnt:%.4f", first, second, interval);
     theta = acos(interval/POINT_DISTANCE)*180/PI;
     angle = theta - 30;
     //printf("theta is %lf angle is %lf\n", theta, angle);
@@ -238,15 +236,14 @@ void process_calc(void)
 void process_resultOut(void)
 {
     int j = 3553500;
+
+    //方向指示灯
     pwm_led_run();
     led_flash_biu(process_getLedNum_byDegree(data.degree));
     while(--j);
     pwm_led_stop();
     
-    LOG_DEBUG("finish, mk:%d %d %d, record:0 %d %d, degree:%d, led:%d",
-                        data.arrive_order[0], data.arrive_order[1], data.arrive_order[2],
-                        data.mk_ave_delay[0], data.mk_ave_delay[1],
-                        data.degree, process_getLedNum_byDegree(data.degree));
+    LOG_DEBUG("4.out, degree:%d, led:%d", data.degree, process_getLedNum_byDegree(data.degree));
 }
 
 void process_run(void)
@@ -264,9 +261,9 @@ void process_run(void)
                 firstArrive = false; 
                 startTime = 0;
                 waitTime = 0;
-                LOG_DEBUG("*********************************************");
+                LOG_DEBUG(">>>>>>>>>>>>>>>>>>>>>");
                 //process_clear();
-                ipc_inst_init();
+                incap_inst_init();
                 data.processState = STATE_WAIT_INPUT;
                 break;
             case STATE_WAIT_INPUT:
@@ -278,10 +275,10 @@ void process_run(void)
                 else if(true == firstArrive)
                 {
                     waitTime = ReadTimer23() - startTime;
-                    if (waitTime > 100000)
+                    if (waitTime > setting.maxWaitCnt)
                     {
                         uint32_t buffer[MK_FIFO_DEEP];
-                        LOG_DEBUG("i can not wait anymore");
+                        //LOG_DEBUG("i can not wait anymore");
                         data.processState = STATE_IDLE;
                         break;
                     }
@@ -294,8 +291,6 @@ void process_run(void)
 
                 break;
             case STATE_OVER:
-                LOG_DEBUG("STATE_OVER");
-                
                 //1.整理数据
                 if(false == process_dealData())
                 {
@@ -316,7 +311,6 @@ void process_run(void)
                 
                 //4.输出
                 process_resultOut();     
-                LOG_DEBUG("4.output  over");
 
 
                 //延时
