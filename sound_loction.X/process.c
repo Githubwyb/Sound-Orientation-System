@@ -236,14 +236,16 @@ void process_calc(void)
 void process_resultOut(void)
 {
     int j = 3553500;
-
+    int ledIndex = 0;
     //方向指示灯
     pwm_led_run();
     led_flash_biu(process_getLedNum_byDegree(data.degree));
     while(--j);
     pwm_led_stop();
     
-    LOG_DEBUG("4.out, degree:%d, led:%d", data.degree, process_getLedNum_byDegree(data.degree));
+    ledIndex = process_getLedNum_byDegree(data.degree);
+    LOG_DEBUG("4.out, degree:%d, led:%d", data.degree, ledIndex);
+    print(">>led%d<<\r\n", ledIndex);
 }
 
 void process_run(void)
