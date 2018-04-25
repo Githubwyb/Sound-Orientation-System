@@ -233,19 +233,42 @@ void process_calc(void)
     data.degree = ((int)real_angle+360)%360;
 }
 
+#define RESULT_FIFO_DEEP 2
+
 void process_resultOut(void)
 {
-    int j = 3553500;
-    int ledIndex = 0;
-    //方向指示灯
-    pwm_led_run();
-    led_flash_biu(process_getLedNum_byDegree(data.degree));
-    while(--j);
-    pwm_led_stop();
-    
+    static uint8_t resultFifo[RESULT_FIFO_DEEP] = {0};
+    static uint8_t resultIndex = 0;
+    uint8_t ledIndex = 0;
+    int i = 0;
     ledIndex = process_getLedNum_byDegree(data.degree);
-    LOG_DEBUG("4.out, degree:%d, led:%d", data.degree, ledIndex);
-    print(">>led%d<<\r\n", ledIndex);
+
+    resultFifo[resultIndex] = ledIndex;
+    resultIndex = (++resultIndex)%RESULT_FIFO_DEEP;
+
+    for( ; i < RESULT_FIFO_DEEP; i++)
+    {
+        if(resultFifo[i] != resultFifo[0]) break;
+    }
+
+    if(i == RESULT_FIFO_DEEP)
+    {
+        int j = 3553500;
+        
+        //方向指示灯
+        pwm_led_run();
+        led_flash_biu(ledIndex);
+        while(--j);
+        pwm_led_stop();
+
+        LOG_DEBUG("4.out, degree:%d, led:%d", data.degree, ledIndex);
+        //print(">>led%d<<\r\n", ledIndex);
+    }
+    else
+    {
+        int j = 655350;
+        while(--j);
+    }
 }
 
 void process_run(void)
@@ -313,12 +336,11 @@ void process_run(void)
                 
                 //4.输出
                 process_resultOut();     
-
-
+/*
                 //延时
                 j = 12000000;
                 while(--j);
-                
+*/                
                 data.processState = STATE_IDLE;
                 break;
             default:
