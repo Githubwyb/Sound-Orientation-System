@@ -3,15 +3,16 @@
 #include "log.h"
 #include "uart1.h"
 #include "timer1.h"
+#include "debug.h"
 #include "protocol.h"
 
 #define PBCLK		    F_PB_CLK
 #define UART1_BAUDRATE	115200
 
-#define UART1_INT_PRIOR       INT_PRIORITY_LEVEL_1
+#define UART1_INT_PRIOR       INT_PRIORITY_LEVEL_5
 #define UART1_INT_SUB_PRIOR   INT_SUB_PRIORITY_LEVEL_0
 
-#define UART1_BUFFER_LEN (512)
+#define UART1_BUFFER_LEN (1024*2)
 
 #define UART1_TX_INT_ENABLE  INTEnable( INT_SOURCE_UART_TX( UART1 ), INT_ENABLED )
 #define UART1_TX_INT_DISABLE INTEnable( INT_SOURCE_UART_TX( UART1 ), INT_DISABLED )
@@ -39,7 +40,7 @@ int uart1_data_received_proc(const char *buf, uint16_t len);
 void uart1_RX_timeout_proc( void );
 
 /*使用UART1作为调试口*/
-void UART1Config( void )
+void uart1_init( void )
 {
     /*重映射UART1端口，TX->RB4, RX->RA4*/
     TRISBbits.TRISB4 = 0;//TX
@@ -80,16 +81,11 @@ void UART1Config( void )
     //UARTSendDataByte(UART1, 0x00);
 }
 
-int uart1_data_received_proc(const char *buf, uint16_t len)
-{
-    /*do sth*/
-    uart1_sendData( buf, len);
-    return 0;
-}
-
 void uart1_RX_timeout_proc( void )
 {
-    uart1_data_received_proc(uart1_rx->buffer, uart1_rx->length);
+
+    debug_proc(uart1_rx->buffer, uart1_rx->length);
+    
     uart1_rx->length = 0;
     memset(uart1_rx->buffer, 0, UART1_BUFFER_LEN);
     TIMER_Stop(uart1_RX_timeout_proc);
@@ -132,7 +128,7 @@ void uart1_RX_interrupt_proc( void )
     INTClearFlag( INT_SOURCE_UART_RX( UART1 ) );
 }
 
-void uart1_sendData( uint8_t *data, uint16_t length )
+void uart1_sendData( const uint8_t *data, uint16_t length )
 {
     if ( length == 0 || length > UART1_BUFFER_LEN )
     {
@@ -167,7 +163,7 @@ void uart1_sendData( uint8_t *data, uint16_t length )
     }
 }
 
-void __ISR( _UART_1_VECTOR, ipl2 ) _UART1_INT_handle( void )
+void __ISR( _UART_1_VECTOR, ipl5) _UART1_INT_handle( void )
 {
     
 	if( INTGetFlag( INT_SOURCE_UART_RX( UART1 ) ) )
@@ -179,4 +175,3 @@ void __ISR( _UART_1_VECTOR, ipl2 ) _UART1_INT_handle( void )
         uart1_TX_interrupt_proc();
 	}
 }
-

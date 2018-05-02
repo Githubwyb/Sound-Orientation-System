@@ -15,7 +15,7 @@ int print(const char* fmt, ...)
 
     length = strlen(buf);
     
-    uart1_sendData((const unsigned char *)buf, length);
+    uart1_sendData((const uint8_t *)buf, length);
     return 0;
 }
 

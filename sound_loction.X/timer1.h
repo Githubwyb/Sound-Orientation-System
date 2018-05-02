@@ -30,4 +30,3 @@ void TIMER_Stop(TICK_HANDLER handle);
 bool TIMER_SetConfiguration(TIMER_CONFIGURATIONS configuration);
 
 #endif	/* TIMER1_H */
-

@@ -3,7 +3,7 @@
 #include <xc.h>
 #include "protocol.h"
 
-#define led_state(level) LATBbits.LATB14 = level;
+//#define led_state(level) LATBbits.LATB14 = level;
 
 typedef enum
 {
@@ -31,12 +31,19 @@ typedef struct {
     unsigned :1;
 } ST_LED_bits;
 
-void led_init(void);
-
 volatile ST_LED_bits LEDbits __asm__ ("LATB") __attribute__((section("sfrs"), address(0xBF886130)));
+
+void led_init(void);
 
 void led_set(u8 led, ENUM_LED_LEVEL sw);
 void led_write(u8 s);
+
+void led_state_init(void);
+void led_state_setLevel(u16 level);
+
+void led_flash_powerOn(void);
+void led_flash_biu(int ledIndex);
+
 
 
 #endif 

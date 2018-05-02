@@ -3,7 +3,7 @@
 
 #include <plib.h>
 
-#define DEBUG_EN 1
+#define DEBUG_EN 0
 
 int print(const char* fmt, ...);
 

@@ -58,8 +58,8 @@
 #define TIMER_INTERRUPT_PRIORITY    0x0001
 #define TIMER_INTERRUPT_PRIORITY_4  0x0004
 
-#define TIMER_INT_PRIOR             T1_INT_PRIOR_3
-#define TIMER_INT_SUB_PRIOR         T1_INT_SUB_PRIOR_1
+#define TIMER_INT_PRIOR             T1_INT_PRIOR_2
+#define TIMER_INT_SUB_PRIOR         T1_INT_SUB_PRIOR_0
 /* Type Definitions ************************************************/
 typedef struct
 {
@@ -239,7 +239,9 @@ bool TIMER_SetConfiguration ( TIMER_CONFIGURATIONS configuration )
   Remarks:
     None
   ***************************************************************************/
-void __ISR(_TIMER_1_VECTOR, ipl3) _Timer1Handler(void)
+
+
+void __ISR(_TIMER_1_VECTOR, ipl2) _Timer1Handler(void)
 {
     //DisableIntT1;
     uint8_t i;

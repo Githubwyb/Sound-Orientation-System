@@ -6,19 +6,24 @@
 #include "timer1.h"
 #include "led.h"
 #include "log.h"
+#include "data.h"
+#include "process.h"
+//#include "int_ext.h"
+#include "incapInst.h"
 
-//11.0592MHz = 115200*96
+#define SYS_FREQ F_SYS_CLK
 /*
 *   sys config
-*   fSYS    = 22.1184/FPLLIDIV*FPLLMUL/FPLLODIV = 44.236800MHz
-*   fPBCK   = fSYS/FPBDIV = 11.0592MHz
+*   fSYS    = 16.00MHz/FPLLIDIV*FPLLMUL/FPLLODIV = 64MHz
+*   fPBCK   = fSYS/FPBDIV = 16MHz
 */
+
 /************************************************************************************************************/
 #pragma config ICESEL = ICS_PGx3        // ICE/ICD Comm Channel Select (Communicate on PGEC3/PGED3)
 #pragma config JTAGEN = OFF             // JTAG Enable (JTAG Disabled)
 
 // DEVCFG2
-#pragma config FPLLIDIV = DIV_12         // PLL Input Divider (2x Divider)
+#pragma config FPLLIDIV = DIV_6         // PLL Input Divider (2x Divider)
 #pragma config FPLLMUL = MUL_24         // PLL Multiplier (16x Multiplier)
 #pragma config UPLLIDIV = DIV_12        // USB PLL Input Divider (12x Divider)
 #pragma config UPLLEN = OFF             // USB PLL Enable (Disabled and Bypassed)
@@ -38,28 +43,25 @@
 #pragma config FWDTWINSZ = WINSZ_25     // Watchdog Timer Window Size (Window Size is 25%)
 /************************************************************************************************************/
 
-void main(void) {
+void main(void) 
+{
+    SYSTEMConfig(SYS_FREQ, SYS_CFG_WAIT_STATES | SYS_CFG_PCACHE);
     /*开启中断*/
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     INTEnableInterrupts();
-
+    
     /*必须放在前面，因为后面初始化用到timer*/
-    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);
-    
+    TIMER_SetConfiguration(TIMER_CONFIGURATION_1MS);   
+    uart1_init();
     led_init();
-    UART1Config();
-
-    led_state(ON);
-    //print("hello world~\r\n");
-    LOG_DEBUG("hello world");
-
-//    
-//    TIMER_RequestTick(testhandler, 10);
-//    TIMER_Start(testhandler);
+    LOG_DEBUG("SoundLocatorV2.0");
     
-    while(1)
-    {
-        
-    }
+    pwm_led_run();
+    led_flash_powerOn();
+    pwm_led_stop();
+    
+    //主流程
+    process_run();
+
     return;
 }
